@@ -12,8 +12,10 @@ const base = import.meta.env.BASE_URL;
 export const foto = (nome: string): string => `${base}assets/fotos/${nome}.webp`;
 export const miniatura = (nome: string): string => `${base}assets/fotos/${nome}-thumb.webp`;
 export const TEXTURA_MARMORE = `${base}assets/textura-marmore.webp`;
-/** Logotipo oficial branco com fundo transparente. */
+/** Logotipo oficial (desenho original): preto + "GASTRONOMIA" prata para fundos claros. */
 export const LOGO_URL = `${base}assets/logo-chef-carlos.png`;
+/** Mesma arte em branco + "GASTRONOMIA" prata, para fundos escuros. */
+export const LOGO_CLARA_URL = `${base}assets/logo-chef-carlos-clara.png`;
 
 export const CEIAS: Ceia[] = [
   {
@@ -30,11 +32,16 @@ export const CEIAS: Ceia[] = [
       'Salpicão defumado',
       'Pudim artesanal',
     ],
-    composicao: { 'chester-fatiado': 1, arroz: 1, farofa: 1, salpicao: 1, pudim: 1 },
+    composicao: { 'chester-inteiro': 1, arroz: 1, farofa: 1, salpicao: 1, pudim: 1 },
     fotos: [
-      { nome: 'IMG_6346', legenda: 'Pudim artesanal do Chef' },
-      { nome: 'IMG_7067', legenda: 'Arroz finalizado no serviço' },
-      { nome: 'IMG_6763', legenda: 'Arroz festivo em cumbucas' },
+      { nome: 'CEIA4_01', legenda: 'A mesa completa da ceia para 4 pessoas' },
+      { nome: 'CEIA4_02', legenda: 'Chester assado com laranja, uvas e alecrim' },
+      { nome: 'CEIA4_03', legenda: 'Chester dourado, assado lentamente' },
+      { nome: 'CEIA4_04', legenda: 'Chester, arroz festivo e saladas' },
+      { nome: 'CEIA4_05', legenda: 'Arroz festivo e sobremesa' },
+      { nome: 'CEIA4_06', legenda: 'Sobremesa da ceia' },
+      { nome: 'CEIA4_07', legenda: 'Saladas e farofa crocante' },
+      { nome: 'CEIA4_08', legenda: 'Chester servido na travessa' },
     ],
   },
   {
