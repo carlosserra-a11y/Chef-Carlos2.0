@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-script: "Great Vibes", "Brush Script MT", cursive;
+
+  --color-carrara: #f8f6f2;
+  --color-marmore: #ece8e1;
+  --color-linho: #e3ddd3;
+  --color-tinta: #1d1b18;
+  --color-grafite: #3a3631;
+  --color-pedra: #6f6960;
+  --color-ouro: #b08d57;
+  --color-ouro-escuro: #7d5f33;
+  --color-oliva: #4f5d3a;
+  --color-whatsapp: #1c9d50;
+
+  --animate-faixa: faixa 60s linear infinite;
+  @keyframes faixa {
+    to { transform: translateX(-50%); }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-carrara font-sans text-tinta antialiased;
+    overflow-x: hidden;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-ouro) 35%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ouro-escuro);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  img {
+    user-select: none;
+  }
+}
+
+@layer components {
+  /* Fundo de mármore Carrara translúcido, usado em seções claras. */
+  .fundo-marmore {
+    background-color: var(--color-carrara);
+    background-image: linear-gradient(rgb(248 246 242 / 0.55), rgb(248 246 242 / 0.55)), var(--textura-marmore);
+    background-size: cover;
+    background-position: center;
+  }
+  .vidro {
+    background: rgb(255 255 255 / 0.62);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    border: 1px solid rgb(255 255 255 / 0.7);
+  }
+  .vidro-escuro {
+    background: rgb(29 27 24 / 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgb(255 255 255 / 0.12);
+  }
+  .filete {
+    background: linear-gradient(90deg, transparent, var(--color-ouro), transparent);
+    height: 1px;
+  }
+  .rolagem-fina {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-linho) transparent;
+  }
+  .sem-barra {
+    scrollbar-width: none;
+  }
+  .sem-barra::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Slider da calculadora */
+input[type="range"].faixa-convidados {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-ouro) var(--preenchido), var(--color-linho) var(--preenchido));
+  cursor: pointer;
+}
+input[type="range"].faixa-convidados::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-tinta);
+  border: 4px solid var(--color-carrara);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+}
+input[type="range"].faixa-convidados::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-tinta);
+  border: 4px solid var(--color-carrara);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
