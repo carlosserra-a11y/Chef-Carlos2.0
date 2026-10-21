@@ -6,8 +6,8 @@ import { diasAte } from '../lib/datas.ts';
 import { SUAVE } from './ui/Reveal.tsx';
 
 const NATAL_ISO = '2026-12-24';
-const DURACAO_MS = 10_000;
-const DURACAO_REDUZIDA_MS = 2_500;
+const DURACAO_MS = 6_000;
+const DURACAO_REDUZIDA_MS = 1_800;
 const DOURADO = '232, 200, 130';
 
 type Props = { onConcluir: () => void };
@@ -34,7 +34,7 @@ export function Intro({ onConcluir }: Props) {
 
   useEffect(() => {
     let ativo = true;
-    const espera = new Promise((r) => setTimeout(r, 900));
+    const espera = new Promise((r) => setTimeout(r, 600));
     const imagem = new Promise((r) => {
       const img = new Image();
       img.onload = img.onerror = r;
@@ -51,7 +51,7 @@ export function Intro({ onConcluir }: Props) {
     const id = window.setTimeout(onConcluir, reduzir ? DURACAO_REDUZIDA_MS : DURACAO_MS);
     const tecla = (e: KeyboardEvent) => (e.key === 'Escape' || e.key === 'Enter') && onConcluir();
     window.addEventListener('keydown', tecla);
-    const conta = animate(contador, dias, { duration: reduzir ? 0 : 1.6, delay: reduzir ? 0 : 1.8, ease: 'easeOut' });
+    const conta = animate(contador, dias, { duration: reduzir ? 0 : 1, delay: reduzir ? 0 : 1.1, ease: 'easeOut' });
     return () => {
       window.clearTimeout(id);
       window.removeEventListener('keydown', tecla);
@@ -75,7 +75,7 @@ export function Intro({ onConcluir }: Props) {
       style={{ background: 'radial-gradient(ellipse at 50% 42%, #1f5039 0%, #0f2c20 48%, #06150f 100%)' }}
       initial={{ clipPath: 'circle(150% at 50% 50%)' }}
       exit={reduzir ? { opacity: 0 } : { clipPath: 'circle(0% at 50% 50%)' }}
-      transition={{ duration: 0.9, ease: SUAVE }}
+      transition={{ duration: 0.7, ease: SUAVE }}
     >
       <NeveDourada estatica={reduzir} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgb(232_200_130/0.18),transparent_55%)]" aria-hidden="true" />
@@ -85,7 +85,7 @@ export function Intro({ onConcluir }: Props) {
           <motion.p
             initial={{ opacity: 0, letterSpacing: '0.2em' }}
             animate={{ opacity: 1, letterSpacing: '0.55em' }}
-            transition={{ duration: 1.4, ease: SUAVE }}
+            transition={{ duration: 1, ease: SUAVE }}
             className="text-[0.65rem] font-semibold uppercase text-[#e8c882] sm:text-xs"
           >
             Ceia de Natal · 2026
@@ -102,7 +102,7 @@ export function Intro({ onConcluir }: Props) {
               height={700}
               initial={reduzir ? false : { clipPath: 'inset(0 100% 0 0)' }}
               animate={{ clipPath: 'inset(0 0% 0 0)' }}
-              transition={{ duration: 2.2, delay: 0.3, ease: [0.65, 0, 0.35, 1] }}
+              transition={{ duration: 1.3, delay: 0.15, ease: [0.65, 0, 0.35, 1] }}
               className="w-full drop-shadow-[0_0_28px_rgba(232,200,130,0.35)]"
             />
             {!reduzir && (
@@ -121,7 +121,7 @@ export function Intro({ onConcluir }: Props) {
                 }}
                 initial={{ backgroundPositionX: '160%' }}
                 animate={{ backgroundPositionX: ['160%', '-60%'] }}
-                transition={{ duration: 2.2, delay: 2.4, repeat: Infinity, repeatDelay: 1.4, ease: 'easeInOut' }}
+                transition={{ duration: 1.6, delay: 1.4, repeat: Infinity, repeatDelay: 1, ease: 'easeInOut' }}
               />
             )}
           </motion.div>
@@ -129,7 +129,7 @@ export function Intro({ onConcluir }: Props) {
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: reduzir ? 0 : 2.2 }}
+            transition={{ duration: 0.6, delay: reduzir ? 0 : 1.1 }}
             className="mt-8 font-display text-2xl italic text-[#f3e3bf]/90 sm:text-3xl"
           >
             {dias > 0 ? (
@@ -146,7 +146,7 @@ export function Intro({ onConcluir }: Props) {
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: reduzir ? 0 : 2.8 }}
+            transition={{ duration: 0.6, delay: reduzir ? 0 : 1.4 }}
             className="pointer-events-auto mt-9 flex flex-col items-center gap-4"
           >
             <motion.button

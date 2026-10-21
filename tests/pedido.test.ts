@@ -8,6 +8,7 @@ import {
   pedidosAbertos,
   resumirPedido,
   validarCliente,
+  valorExtras,
   type DadosCliente,
 } from '../src/lib/pedido.ts';
 import type { Ceia, Extra, ItemCarrinho } from '../src/types.ts';
@@ -82,6 +83,23 @@ test('monta mensagem completa para o WhatsApp com a entrega fixa', () => {
   assert.match(msg, /• Ceia até 4 pessoas — R\$\s599,90/);
   assert.match(msg, /\*Total:\* R\$\s1\.799,80/);
   assert.match(msg, /Sem lactose/);
+});
+
+test('soma o valor dos adicionais com preço para o total ao vivo da ceia', () => {
+  assert.equal(valorExtras({ chester: 2 }, extras), 400);
+  assert.equal(valorExtras({ farofa: 3 }, extras), 0);
+  assert.equal(valorExtras({}, extras), 0);
+  assert.equal(valorExtras({ chester: 1, inexistente: 4 }, extras), 200);
+  assert.equal(valorExtras({ a: 3 }, [{ id: 'a', nome: 'A', porcao: '1 kg', preco: 29.9 }]), 89.7);
+});
+
+test('mostra o número do cliente na comanda quando ele existe', () => {
+  const condicoes = { entrega: ENTREGA, brinde: 'Bolsa térmica Chef Carlos Jr' };
+  const comNumero = montarMensagem(resumirPedido(itens, catalogo), cliente, condicoes, 7);
+  assert.match(comNumero, /\*Cliente nº 7:\* Maria Silva/);
+  const semNumero = montarMensagem(resumirPedido(itens, catalogo), cliente, condicoes, null);
+  assert.match(semNumero, /\*Cliente:\* Maria Silva/);
+  assert.doesNotMatch(semNumero, /nº/);
 });
 
 test('gera link do WhatsApp com texto codificado', () => {

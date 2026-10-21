@@ -7,14 +7,16 @@ React 19 · Vite 8 · Tailwind CSS 4 · Motion · TypeScript.
 
 ## O que tem no site
 
-- **Intro** em verde-pinheiro e dourado: a assinatura oficial do Chef é escrita com brilho dourado, neve dourada que reage ao toque/mouse (com faíscas), logo com inclinação 3D, contagem regressiva para o Natal e botão "Entrar no cardápio" (uma vez por visita; "Pular"; respeita "reduzir movimento").
+- **Intro** em verde-pinheiro e dourado: a assinatura oficial do Chef é escrita com brilho dourado, neve dourada que reage ao toque/mouse (com faíscas), logo com inclinação 3D, contagem regressiva para o Natal e botão "Entrar no cardápio" (cerca de 6 s, uma vez por visita; "Pular"; respeita "reduzir movimento").
 - **Hero** focado na ceia, com os três valores clicáveis e parallax.
 - **As três ceias** (R$ 599,90 · R$ 999,90 · R$ 1.399,90), cada uma com o **cardápio oficial com quantidades** (proteínas, acompanhamentos, sobremesas e finalização), fotos, ilustração da composição da mesa e **adicionais**.
 - Cada ceia atende **até 12 pessoas**; para mais convidados o cliente adiciona outra ceia ao pedido (o carrinho mostra quantas pessoas o pedido serve).
 - **Brinde**: bolsa térmica Chef Carlos Jr em todo pedido (seção própria, aviso em cada ceia, no carrinho e na mensagem do WhatsApp).
 - **Como encomendar** em 4 passos.
 - **Pedidos até 20/12/2026; entrega no dia 24/12, a partir das 12h, com rastreio** (o carrinho não pede data nem convidados e bloqueia o envio depois do prazo).
+- **Total ao vivo**: cada adicional escolhido soma na hora ao valor da ceia (no painel da ceia e em cada item do carrinho).
 - **Carrinho** com adicionais editáveis e formulário que monta a mensagem e abre o WhatsApp oficial (+55 48 99683-5439).
+- **Número do cliente na comanda**: cada pessoa nova que envia um pedido recebe o próximo número (1, 2, 3…), que vai na mensagem como `*Cliente nº N:* Nome` e aparece para o cliente na tela de pedido enviado. A mesma pessoa (mesmo navegador) mantém o número nos pedidos seguintes. Como o site é estático, a sequência vem de um contador público gratuito ([abacus](https://jasoncameron.dev/abacus/)); se ele estiver fora do ar, o pedido sai normalmente, só sem o número. Quantos clientes já foram numerados: <https://abacus.jasoncameron.dev/get/chef-carlos-jr/clientes-natal-2026> (em desenvolvimento o site usa a chave `clientes-teste`). O número é um apoio para organizar os pedidos, não uma identificação segura: quem limpar o navegador ou usar outro aparelho recebe um número novo, então o Chef continua confirmando cada pedido pelo nome e pelo telefone do WhatsApp.
 
 ## Como alterar conteúdo
 

@@ -4,7 +4,7 @@ import { useRef, useState, type KeyboardEvent } from 'react';
 import { BRINDE_TEXTO, CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, foto, miniatura } from '../data/menuData.ts';
 import { comExtra } from '../lib/carrinho.ts';
 import { formatarBRL } from '../lib/formato.ts';
-import { linkWhatsApp } from '../lib/pedido.ts';
+import { linkWhatsApp, valorExtras } from '../lib/pedido.ts';
 import type { Ceia, CeiaId } from '../types.ts';
 import { CeiaIllustration } from './CeiaIllustration.tsx';
 import { ExtrasSelector } from './ExtrasSelector.tsx';
@@ -137,6 +137,8 @@ function PainelCeia({ ceia, onAdicionar }: { ceia: Ceia; onAdicionar: Props['onA
   const [visao, setVisao] = useState<'fotos' | 'composicao'>('fotos');
   const [fotoAtiva, setFotoAtiva] = useState(0);
   const totalExtras = Object.values(extras).reduce((s, q) => s + q, 0);
+  const valorAdicionais = valorExtras(extras, EXTRAS);
+  const total = ceia.preco + valorAdicionais;
   const atual = ceia.fotos[fotoAtiva] ?? ceia.fotos[0];
   const mensagem = `Olá, Chef Carlos! Tenho interesse na ${ceia.nome} (${formatarBRL(ceia.preco)}). Pode me passar as datas disponíveis?`;
 
@@ -258,10 +260,22 @@ function PainelCeia({ ceia, onAdicionar }: { ceia: Ceia; onAdicionar: Props['onA
         </div>
 
         <div className="mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-white/10 pt-6">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-carrara/55">Valor da ceia</p>
-            <p className="font-display text-5xl font-semibold text-ouro">{formatarBRL(ceia.preco)}</p>
-            {totalExtras > 0 && <p className="mt-1 text-xs text-carrara/60">+ adicionais selecionados</p>}
+          <div aria-live="polite">
+            <p className="text-xs uppercase tracking-[0.2em] text-carrara/55">{totalExtras > 0 ? 'Total com adicionais' : 'Valor da ceia'}</p>
+            <motion.p
+              key={total}
+              initial={{ opacity: 0.5, scale: 1.06 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.35, ease: SUAVE }}
+              className="origin-left font-display text-5xl font-semibold text-ouro"
+            >
+              {formatarBRL(total)}
+            </motion.p>
+            {totalExtras > 0 && (
+              <p className="mt-1 text-xs text-carrara/60">
+                Ceia {formatarBRL(ceia.preco)} + adicionais {formatarBRL(valorAdicionais)}
+              </p>
+            )}
             <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-ouro">
               <Gift className="size-3.5" aria-hidden="true" /> Brinde: {BRINDE_TEXTO}
             </p>

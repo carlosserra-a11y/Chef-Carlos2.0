@@ -46,6 +46,13 @@ export function resumirPedido(itens: readonly ItemCarrinho[], catalogo: Catalogo
   return { ceias, total, temValorACombinar };
 }
 
+/** Soma dos adicionais com preço (os sem preço ficam a combinar). */
+export function valorExtras(extras: Readonly<Record<string, number>>, catalogo: readonly Extra[]): number {
+  return centavos(
+    Object.entries(extras).reduce((soma, [id, quantidade]) => soma + (catalogo.find((e) => e.id === id)?.preco ?? 0) * quantidade, 0),
+  );
+}
+
 /** Quantas pessoas as ceias do pedido servem somadas (cada ceia atende até 12). */
 export function capacidadePedido(itens: readonly ItemCarrinho[], ceias: readonly Ceia[]): number {
   return itens.reduce((soma, item) => soma + (ceias.find((c) => c.id === item.ceiaId)?.maxPessoas ?? 0), 0);
@@ -87,11 +94,18 @@ export interface CondicoesPedido {
   brinde: string;
 }
 
-export function montarMensagem(resumo: ResumoPedido, cliente: DadosCliente, condicoes: CondicoesPedido): string {
+/** `numeroCliente` é o número sequencial da pessoa (1, 2, 3…), que o Chef usa para identificar o pedido. */
+export function montarMensagem(
+  resumo: ResumoPedido,
+  cliente: DadosCliente,
+  condicoes: CondicoesPedido,
+  numeroCliente: number | null = null,
+): string {
+  const rotuloCliente = numeroCliente ? `*Cliente nº ${numeroCliente}:*` : '*Cliente:*';
   const linhas = [
     'Olá, Chef Carlos! Quero encomendar minha ceia pelo site.',
     '',
-    `*Cliente:* ${cliente.nome.trim()}`,
+    `${rotuloCliente} ${cliente.nome.trim()}`,
     `*Endereço:* ${cliente.endereco.trim()}`,
     `*Entrega:* ${condicoes.entrega}`,
     `*Brinde:* ${condicoes.brinde}`,

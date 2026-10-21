@@ -1,10 +1,22 @@
 import { CheckCircle2, ChevronDown, Gift, ShoppingBag, Trash2, Truck, Users, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { BRINDE_TEXTO, CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_ISO, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, miniatura } from '../data/menuData.ts';
+import {
+  BRINDE_TEXTO,
+  CEIAS,
+  CONTADOR_CLIENTES_URL,
+  ENTREGA_TEXTO,
+  EXTRAS,
+  PRAZO_PEDIDOS_ISO,
+  PRAZO_PEDIDOS_TEXTO,
+  WHATSAPP_NUMERO,
+  miniatura,
+} from '../data/menuData.ts';
 import { useBloqueioRolagem } from '../hooks/useBloqueioRolagem.ts';
 import type { AcaoCarrinho } from '../lib/carrinho.ts';
 import { formatarBRL } from '../lib/formato.ts';
+import { enviarPedidoWhatsApp } from '../lib/envioPedido.ts';
+import { armazenamentoDoNavegador, lerNumeroSalvo, obterNumeroCliente } from '../lib/numeroCliente.ts';
 import {
   capacidadePedido,
   linkWhatsApp,
@@ -12,6 +24,7 @@ import {
   pedidosAbertos,
   resumirPedido,
   validarCliente,
+  valorExtras,
   type DadosCliente,
   type ErrosCliente,
 } from '../lib/pedido.ts';
@@ -21,6 +34,7 @@ import { WhatsAppIcon } from './ui/BrandIcons.tsx';
 import { SUAVE } from './ui/Reveal.tsx';
 
 const CATALOGO = { ceias: CEIAS, extras: EXTRAS };
+const CONDICOES = { entrega: ENTREGA_TEXTO, brinde: BRINDE_TEXTO };
 const VAZIO: DadosCliente = { nome: '', endereco: '', observacoes: '' };
 const FOCAVEIS = 'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])';
 
@@ -40,6 +54,9 @@ export function OrderDrawer({ aberto, itens, despachar, onFechar }: Props) {
   // O formulário vive aqui (fora do painel animado) para não se perder ao fechar e reabrir.
   const [dados, setDados] = useState<DadosCliente>(VAZIO);
   const [enviado, setEnviado] = useState(false);
+  const [numeroCliente, setNumeroCliente] = useState<number | null>(null);
+  // Fica aqui (e não no conteúdo) para fechar e reabrir a gaveta durante o envio não liberar um segundo envio.
+  const [enviando, setEnviando] = useState(false);
   const painel = useRef<HTMLElement>(null);
   const fechar = useRef<HTMLButtonElement>(null);
   useBloqueioRolagem(aberto);
@@ -75,7 +92,8 @@ export function OrderDrawer({ aberto, itens, despachar, onFechar }: Props) {
     }
   };
 
-  const aoEnviar = () => {
+  const aoEnviar = (numero: number | null) => {
+    setNumeroCliente(numero);
     setEnviado(true);
     despachar({ tipo: 'limpar' });
   };
@@ -106,11 +124,19 @@ export function OrderDrawer({ aberto, itens, despachar, onFechar }: Props) {
               </button>
             </header>
             {enviado && itens.length === 0 ? (
-              <Enviado onFechar={onFechar} />
+              <Enviado numeroCliente={numeroCliente} onFechar={onFechar} />
             ) : itens.length === 0 ? (
               <Vazio onFechar={onFechar} />
             ) : (
-              <Conteudo itens={itens} despachar={despachar} dados={dados} setDados={setDados} onEnviado={aoEnviar} />
+              <Conteudo
+                itens={itens}
+                despachar={despachar}
+                dados={dados}
+                setDados={setDados}
+                enviando={enviando}
+                setEnviando={setEnviando}
+                onEnviado={aoEnviar}
+              />
             )}
           </motion.aside>
         </motion.div>
@@ -131,11 +157,16 @@ function Vazio({ onFechar }: { onFechar: () => void }) {
   );
 }
 
-function Enviado({ onFechar }: { onFechar: () => void }) {
+function Enviado({ numeroCliente, onFechar }: { numeroCliente: number | null; onFechar: () => void }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 p-10 text-center" role="status">
       <CheckCircle2 className="size-12 text-oliva" aria-hidden="true" />
       <p className="font-display text-3xl font-semibold text-tinta">Pedido enviado!</p>
+      {numeroCliente !== null && (
+        <p className="rounded-2xl border border-ouro/50 bg-white px-5 py-3 text-sm text-grafite">
+          Seu número de cliente: <strong className="font-display text-2xl text-ouro-escuro">nº {numeroCliente}</strong>
+        </p>
+      )}
       <p className="text-sm text-pedra">
         Abrimos o WhatsApp com o seu pedido completo. É só tocar em enviar por lá: o Chef Carlos responde para confirmar a data e a entrega.
       </p>
@@ -151,10 +182,12 @@ type ConteudoProps = {
   despachar: Props['despachar'];
   dados: DadosCliente;
   setDados: (atualizar: (d: DadosCliente) => DadosCliente) => void;
-  onEnviado: () => void;
+  enviando: boolean;
+  setEnviando: (enviando: boolean) => void;
+  onEnviado: (numeroCliente: number | null) => void;
 };
 
-function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProps) {
+function Conteudo({ itens, despachar, dados, setDados, enviando, setEnviando, onEnviado }: ConteudoProps) {
   const [erros, setErros] = useState<ErrosCliente>({});
   const [expandido, setExpandido] = useState<string | null>(null);
   const resumo = resumirPedido(itens, CATALOGO);
@@ -169,9 +202,9 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
     onChange: (e: { target: { value: string } }) => setDados((d) => ({ ...d, [chave]: e.target.value })),
   });
 
-  const enviar = (e: FormEvent) => {
+  const enviar = async (e: FormEvent) => {
     e.preventDefault();
-    if (!abertos) return;
+    if (!abertos || enviando) return;
     const encontrados = validarCliente(dados);
     setErros(encontrados);
     const primeiroErro = Object.keys(encontrados)[0];
@@ -179,17 +212,31 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
       document.getElementById(`pedido-${primeiroErro}`)?.focus();
       return;
     }
-    window.open(linkWhatsApp(WHATSAPP_NUMERO, montarMensagem(resumo, dados, { entrega: ENTREGA_TEXTO, brinde: BRINDE_TEXTO })), '_blank', 'noopener,noreferrer');
-    onEnviado();
+    const armazenamento = armazenamentoDoNavegador();
+    setEnviando(true);
+    try {
+      const resultado = await enviarPedidoWhatsApp({
+        numeroSalvo: lerNumeroSalvo(armazenamento),
+        abrir: (url, alvo, recursos) => window.open(url, alvo, recursos),
+        irPara: (url) => window.location.assign(url),
+        obterNumero: () => obterNumeroCliente({ url: CONTADOR_CLIENTES_URL, armazenamento }),
+        montarLink: (numero) => linkWhatsApp(WHATSAPP_NUMERO, montarMensagem(resumo, dados, CONDICOES, numero)),
+      });
+      if (resultado.enviado) onEnviado(resultado.numero);
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
-    <div className="flex flex-1 flex-col">
+    // Durante o envio, carrinho e formulário ficam travados: a mensagem já saiu com este conteúdo.
+    <fieldset disabled={enviando} className="flex min-w-0 flex-1 flex-col">
       <ul className="divide-y divide-linho px-6">
         {itens.map((item) => {
           const ceia = CEIAS.find((c) => c.id === item.ceiaId);
           if (!ceia) return null;
           const qtdExtras = Object.values(item.extras).reduce((s, q) => s + q, 0);
+          const adicionais = valorExtras(item.extras, EXTRAS);
           const aberto = expandido === item.uid;
           return (
             <li key={item.uid} className="py-4">
@@ -197,7 +244,12 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
                 <img src={miniatura(ceia.fotos[0].nome)} alt="" className="size-14 shrink-0 rounded-xl object-cover" />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-tinta">{ceia.nome}</p>
-                  <p className="font-display text-xl font-semibold text-ouro-escuro">{formatarBRL(ceia.preco)}</p>
+                  <p className="font-display text-xl font-semibold text-ouro-escuro">{formatarBRL(ceia.preco + adicionais)}</p>
+                  {adicionais > 0 && (
+                    <p className="text-xs text-pedra">
+                      Ceia {formatarBRL(ceia.preco)} + adicionais {formatarBRL(adicionais)}
+                    </p>
+                  )}
                   <button
                     type="button"
                     onClick={() => setExpandido(aberto ? null : item.uid)}
@@ -274,10 +326,11 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
         )}
         <button
           type="submit"
-          disabled={!abertos}
+          disabled={!abertos || enviando}
+          aria-busy={enviando}
           className="flex w-full items-center justify-center gap-2 rounded-full bg-whatsapp px-6 py-4 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <WhatsAppIcon className="size-5" /> Enviar pedido pelo WhatsApp
+          <WhatsAppIcon className="size-5" /> {enviando ? 'Gerando seu número de cliente…' : 'Enviar pedido pelo WhatsApp'}
         </button>
         <button
           type="button"
@@ -287,7 +340,7 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
           Esvaziar pedido
         </button>
       </form>
-    </div>
+    </fieldset>
   );
 }
 

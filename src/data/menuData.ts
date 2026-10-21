@@ -17,6 +17,14 @@ export const ENTREGA_TEXTO = '24/12, a partir das 12h, com rastreio de entrega';
 export const BRINDE_TEXTO = 'Bolsa térmica Chef Carlos Jr';
 export const BRINDE_FOTO = 'BOLSA_BRINDE';
 
+/**
+ * Contador público que dá a cada cliente novo o próximo número (1, 2, 3…) na comanda do WhatsApp.
+ * Em desenvolvimento usa outra chave, para os testes não gastarem a numeração real.
+ * Quantos clientes já foram numerados: https://abacus.jasoncameron.dev/get/chef-carlos-jr/clientes-natal-2026
+ */
+const CONTADOR_BASE = 'https://abacus.jasoncameron.dev/hit/chef-carlos-jr';
+export const CONTADOR_CLIENTES_URL = `${CONTADOR_BASE}/${import.meta.env.DEV ? 'clientes-teste' : 'clientes-natal-2026'}`;
+
 const base = import.meta.env.BASE_URL;
 export const foto = (nome: string): string => `${base}assets/fotos/${nome}.webp`;
 export const miniatura = (nome: string): string => `${base}assets/fotos/${nome}-thumb.webp`;
