@@ -164,18 +164,29 @@ export const CEIAS: Ceia[] = [
   },
 ];
 
-/** Adicionais de cada ceia (itens do cardápio). Sem `preco`, o valor é combinado no WhatsApp. */
+/** Adicionais com preço oficial (somados ao total do pedido). */
 export const EXTRAS: Extra[] = [
-  { id: 'chester', nome: 'Chester assado', porcao: '1 unidade de 3 a 4 kg' },
-  { id: 'lombo', nome: 'Lombo suíno à Califórnia', porcao: 'porção extra' },
-  { id: 'arroz-branco', nome: 'Arroz branco', porcao: 'porção extra' },
-  { id: 'arroz-grega', nome: 'Arroz à grega', porcao: 'porção extra' },
-  { id: 'farofa', nome: 'Farofa especial', porcao: 'porção extra' },
-  { id: 'quiche', nome: 'Quiche', porcao: '1 unidade' },
-  { id: 'maionese', nome: 'Maionese de batata', porcao: 'porção extra' },
-  { id: 'salpicao', nome: 'Salpicão', porcao: 'porção extra' },
-  { id: 'waldorf', nome: 'Salada Waldorf', porcao: 'porção extra' },
-  { id: 'pave', nome: 'Pavê', porcao: 'porção extra' },
-  { id: 'cheesecake', nome: 'Cheesecake', porcao: '1 unidade' },
-  { id: 'pudim', nome: 'Pudim', porcao: '1 unidade' },
+  { id: 'chester', nome: 'Chester assado', porcao: '3 a 4 kg', preco: 299.9 },
+  { id: 'lombo', nome: 'Lombo suíno à Califórnia', porcao: '1 kg', preco: 149.9 },
+  { id: 'salmao', nome: 'Salmão com crosta de limão siciliano e parmesão', porcao: '1 kg', preco: 250 },
+  { id: 'arroz-branco', nome: 'Arroz branco', porcao: '1,5 kg', preco: 39.9 },
+  {
+    id: 'arroz-grega', nome: 'Arroz à grega', porcao: '1,5 kg', preco: 49.9,
+    descricao: 'Arroz, cenoura, uvas-passas, ervilha, milho, presunto, queijo e tempero verde',
+  },
+  {
+    id: 'farofa', nome: 'Farofa especial', porcao: '1 kg', preco: 29.9,
+    descricao: 'Farinha de mandioca, flocão de milho, bacon, frutas cristalizadas e batata palha',
+  },
+  { id: 'maionese', nome: 'Maionese de batata', porcao: '1 kg', preco: 49.9 },
+  {
+    id: 'salpicao', nome: 'Salpicão', porcao: '1 kg', preco: 89.9,
+    descricao: 'Frango desfiado, pimentão, milho, ervilha, salsa, maçã e maionese. Acompanha batata palha à parte',
+  },
+  { id: 'waldorf', nome: 'Salada Waldorf', porcao: '800 g', preco: 59.9 },
+  { id: 'quiche', nome: 'Quiche de peito de peru', porcao: '1 kg', preco: 119.9 },
+  { id: 'quiche-queijos', nome: 'Quiche quatro queijos', porcao: '1 kg', preco: 119.9 },
+  { id: 'pave', nome: 'Pavê de chocolate meio amargo com creme de baunilha', porcao: '1 kg', preco: 99.9 },
+  { id: 'cheesecake', nome: 'Cheesecake de frutas vermelhas', porcao: '1,5 kg', preco: 159.9 },
+  { id: 'pudim', nome: 'Pudim', porcao: '1 kg', preco: 89.9 },
 ];

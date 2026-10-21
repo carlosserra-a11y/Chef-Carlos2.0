@@ -55,6 +55,8 @@ export interface Extra {
   id: string;
   nome: string;
   porcao: string;
+  /** Ingredientes ou detalhes mostrados abaixo do nome. */
+  descricao?: string;
   /** Sem preço definido o extra entra no pedido como "valor a combinar". */
   preco?: number;
 }

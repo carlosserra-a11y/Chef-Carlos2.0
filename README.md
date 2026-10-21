@@ -7,7 +7,7 @@ React 19 · Vite 8 · Tailwind CSS 4 · Motion · TypeScript.
 
 ## O que tem no site
 
-- **Intro** ao abrir o site: "Chef Carlos" escrito à mão em dourado, com cortina de abertura (uma vez por visita; botão "Pular intro"; respeita "reduzir movimento").
+- **Intro** em verde-pinheiro e dourado: a assinatura oficial do Chef é escrita com brilho dourado, neve dourada que reage ao toque/mouse (com faíscas), logo com inclinação 3D, contagem regressiva para o Natal e botão "Entrar no cardápio" (uma vez por visita; "Pular"; respeita "reduzir movimento").
 - **Hero** focado na ceia, com os três valores clicáveis e parallax.
 - **As três ceias** (R$ 599,90 · R$ 999,90 · R$ 1.399,90), cada uma com o **cardápio oficial com quantidades** (proteínas, acompanhamentos, sobremesas e finalização), fotos, ilustração da composição da mesa e **adicionais**.
 - Cada ceia atende **até 12 pessoas**; para mais convidados o cliente adiciona outra ceia ao pedido (o carrinho mostra quantas pessoas o pedido serve).
@@ -24,7 +24,7 @@ Tudo fica em `src/data/menuData.ts`:
 - **Brinde**: `BRINDE_TEXTO` e `BRINDE_FOTO`.
 - **Prazo e entrega**: `PRAZO_PEDIDOS_ISO`, `PRAZO_PEDIDOS_TEXTO` e `ENTREGA_TEXTO`.
 - **Fotos de cada ceia**: lista `fotos` (`nome` do arquivo em `public/assets/fotos/`, `legenda` e `ilustrativa: true` para imagens criadas).
-- **Preço dos adicionais**: preencha `preco` no item de `EXTRAS` (ex.: `preco: 89.9`). Sem preço, entra como "valor a combinar".
+- **Adicionais**: `EXTRAS` (nome, porção, `preco` e `descricao` opcional). Os preços somam no total do pedido.
 - **Logo**: desenho oficial em `public/assets/logo-chef-carlos.png` (preta + "GASTRONOMIA" prata) e `logo-chef-carlos-clara.png` (branca, para fundos escuros).
 
 ## Rodar localmente

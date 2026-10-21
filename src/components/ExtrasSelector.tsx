@@ -27,9 +27,10 @@ export function ExtrasSelector({ extras, valores, onAlterar, escuro = false }: P
         return (
           <li key={extra.id} className={`flex items-center justify-between gap-3 py-2.5 ${linha}`}>
             <div className="min-w-0">
-              <p className={`truncate text-sm font-medium ${texto}`}>{extra.nome}</p>
-              <p className={`text-xs ${sub}`}>
-                {extra.porcao} · {preco}
+              <p className={`text-sm font-medium leading-snug ${texto}`}>{extra.nome}</p>
+              {extra.descricao && <p className={`mt-0.5 line-clamp-2 text-xs leading-snug ${sub}`}>{extra.descricao}</p>}
+              <p className={`mt-0.5 text-xs ${sub}`}>
+                {extra.porcao} · <span className={`font-semibold ${escuro ? 'text-ouro' : 'text-ouro-escuro'}`}>{preco}</span>
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-1.5">

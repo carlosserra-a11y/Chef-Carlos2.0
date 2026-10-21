@@ -17,6 +17,16 @@ type Props = {
   onEscolherCeia: (id: CeiaId) => void;
 };
 
+function SeloNatal() {
+  return (
+    <>
+      <p className="font-script text-3xl leading-none text-ouro-escuro">Natal 2026</p>
+      <p className="mt-1 text-sm font-semibold text-tinta">Entrega 24/12, a partir das 12h</p>
+      <p className="mt-1 text-xs text-pedra">Pedidos até 20/12 · a partir de {formatarBRL(MENOR_PRECO)}</p>
+    </>
+  );
+}
+
 export function Hero({ iniciar, onEscolherCeia }: Props) {
   const secao = useRef<HTMLElement>(null);
   const reduzir = useReducedMotion();
@@ -101,13 +111,22 @@ export function Hero({ iniciar, onEscolherCeia }: Props) {
               Chef Carlos Jr
             </figcaption>
           </motion.figure>
-          <motion.div style={{ y: yCartao }} {...entrada(0.7)} className="absolute -left-6 bottom-14 w-40 rotate-[-6deg] overflow-hidden rounded-2xl border-[6px] border-white shadow-2xl sm:-left-16 sm:w-52">
+          {/* Telas maiores: foto com prato e selo flutuando nas laterais, longe do rosto. */}
+          <motion.div style={{ y: yCartao }} {...entrada(0.7)} className="absolute -left-16 bottom-14 hidden w-52 rotate-[-6deg] overflow-hidden rounded-2xl border-[6px] border-white shadow-2xl sm:block">
             <img src={foto('CHEF_PRATO')} alt="Chef Carlos Jr apresentando um prato autoral" width={1302} height={1066} className="aspect-[4/5] w-full object-cover object-[50%_45%]" />
           </motion.div>
-          <motion.div style={{ y: ySelo }} {...entrada(0.85)} className="vidro absolute -right-3 top-8 max-w-[12rem] rounded-2xl p-4 shadow-xl sm:-right-8">
-            <p className="font-script text-3xl leading-none text-ouro-escuro">Natal 2026</p>
-            <p className="mt-1 text-sm font-semibold text-tinta">Entrega 24/12, a partir das 12h</p>
-            <p className="mt-1 text-xs text-pedra">Pedidos até 20/12 · a partir de {formatarBRL(MENOR_PRECO)}</p>
+          <motion.div style={{ y: ySelo }} {...entrada(0.85)} className="vidro absolute -left-12 top-8 hidden max-w-[12rem] rounded-2xl p-4 shadow-xl sm:block">
+            <SeloNatal />
+          </motion.div>
+
+          {/* Celular: os dois lado a lado, abaixo do retrato, sem cobrir o Chef. */}
+          <motion.div {...entrada(0.6)} className="mt-10 grid grid-cols-2 gap-3 sm:hidden">
+            <div className="overflow-hidden rounded-2xl border-4 border-white shadow-lg">
+              <img src={foto('CHEF_PRATO')} alt="Chef Carlos Jr apresentando um prato autoral" width={1302} height={1066} className="aspect-[4/5] w-full object-cover object-[50%_45%]" />
+            </div>
+            <div className="vidro flex flex-col justify-center rounded-2xl p-4 shadow-lg">
+              <SeloNatal />
+            </div>
           </motion.div>
         </div>
       </div>
