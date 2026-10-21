@@ -53,49 +53,26 @@ export function capacidadePedido(itens: readonly ItemCarrinho[], ceias: readonly
 
 export interface DadosCliente {
   nome: string;
-  dataEvento: string;
-  convidados: string;
   endereco: string;
   observacoes: string;
 }
 
 export type ErrosCliente = Partial<Record<keyof DadosCliente, string>>;
 
-const DATA_ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
-const SO_DIGITOS = /^\d{1,3}$/;
-
-function dataValida(iso: string): boolean {
-  const m = DATA_ISO.exec(iso);
-  if (!m) return false;
-  const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
-  return d.toISOString().slice(0, 10) === iso;
-}
-
-/**
- * `hojeIso` no formato aaaa-mm-dd (data local do visitante).
- * `capacidade` = pessoas atendidas pelas ceias do pedido; acima disso, o cliente precisa de outra ceia.
- */
-export function validarCliente(dados: DadosCliente, hojeIso: string, capacidade: number): ErrosCliente {
+/** A entrega é em data fixa (24/12), então o cliente só informa nome, endereço e observações. */
+export function validarCliente(dados: DadosCliente): ErrosCliente {
   const erros: ErrosCliente = {};
   const nome = dados.nome.trim();
   if (nome.length < 2 || nome.length > 80) erros.nome = 'Informe seu nome (2 a 80 caracteres).';
-  if (!dataValida(dados.dataEvento)) erros.dataEvento = 'Escolha a data da ceia.';
-  else if (dados.dataEvento < hojeIso) erros.dataEvento = 'Essa data já passou.';
-  const convidados = Number(dados.convidados.trim());
-  if (!SO_DIGITOS.test(dados.convidados.trim()) || convidados < 1) {
-    erros.convidados = 'Informe quantas pessoas vão à ceia.';
-  } else if (convidados > capacidade) {
-    erros.convidados = `Suas ceias servem até ${capacidade} pessoas. Para mais convidados, adicione outra ceia ao pedido.`;
-  }
   const endereco = dados.endereco.trim();
   if (endereco.length < 5 || endereco.length > 200) erros.endereco = 'Informe o endereço de entrega.';
   if (dados.observacoes.length > 500) erros.observacoes = 'Use até 500 caracteres.';
   return erros;
 }
 
-export function formatarDataBR(iso: string): string {
-  const m = DATA_ISO.exec(iso);
-  return m ? `${m[3]}/${m[2]}/${m[1]}` : iso;
+/** Datas no formato aaaa-mm-dd: pedidos aceitos até o fim do dia do prazo. */
+export function pedidosAbertos(hojeIso: string, prazoIso: string): boolean {
+  return hojeIso <= prazoIso;
 }
 
 const linhaExtra = (e: LinhaExtra): string =>
@@ -103,14 +80,14 @@ const linhaExtra = (e: LinhaExtra): string =>
     e.preco === undefined ? 'valor a combinar' : formatarBRL(e.preco * e.quantidade)
   }`;
 
-export function montarMensagem(resumo: ResumoPedido, cliente: DadosCliente): string {
+/** `entrega` = texto fixo da entrega (ex.: "24/12, a partir das 12h, com rastreio de entrega"). */
+export function montarMensagem(resumo: ResumoPedido, cliente: DadosCliente, entrega: string): string {
   const linhas = [
     'Olá, Chef Carlos! Quero encomendar minha ceia pelo site.',
     '',
     `*Cliente:* ${cliente.nome.trim()}`,
-    `*Data da ceia:* ${formatarDataBR(cliente.dataEvento)}`,
-    `*Convidados:* ${cliente.convidados.trim()}`,
     `*Endereço:* ${cliente.endereco.trim()}`,
+    `*Entrega:* ${entrega}`,
     '',
     '*Ceias*',
     ...resumo.ceias.flatMap((c) => [`• ${c.nome} — ${formatarBRL(c.preco)}`, ...c.extras.map(linhaExtra)]),

@@ -1,7 +1,7 @@
-import { CheckCircle2, ChevronDown, ShoppingBag, Trash2, Users, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ShoppingBag, Trash2, Truck, Users, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { CEIAS, EXTRAS, WHATSAPP_NUMERO, miniatura } from '../data/menuData.ts';
+import { CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_ISO, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, miniatura } from '../data/menuData.ts';
 import { useBloqueioRolagem } from '../hooks/useBloqueioRolagem.ts';
 import type { AcaoCarrinho } from '../lib/carrinho.ts';
 import { formatarBRL } from '../lib/formato.ts';
@@ -9,6 +9,7 @@ import {
   capacidadePedido,
   linkWhatsApp,
   montarMensagem,
+  pedidosAbertos,
   resumirPedido,
   validarCliente,
   type DadosCliente,
@@ -20,7 +21,7 @@ import { WhatsAppIcon } from './ui/BrandIcons.tsx';
 import { SUAVE } from './ui/Reveal.tsx';
 
 const CATALOGO = { ceias: CEIAS, extras: EXTRAS };
-const VAZIO: DadosCliente = { nome: '', dataEvento: '', convidados: '', endereco: '', observacoes: '' };
+const VAZIO: DadosCliente = { nome: '', endereco: '', observacoes: '' };
 const FOCAVEIS = 'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])';
 
 const hojeLocal = (): string => {
@@ -158,7 +159,7 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
   const [expandido, setExpandido] = useState<string | null>(null);
   const resumo = resumirPedido(itens, CATALOGO);
   const capacidade = capacidadePedido(itens, CEIAS);
-  const hoje = hojeLocal();
+  const abertos = pedidosAbertos(hojeLocal(), PRAZO_PEDIDOS_ISO);
 
   const campo = (chave: keyof DadosCliente) => ({
     id: `pedido-${chave}`,
@@ -170,14 +171,15 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
 
   const enviar = (e: FormEvent) => {
     e.preventDefault();
-    const encontrados = validarCliente(dados, hoje, capacidade);
+    if (!abertos) return;
+    const encontrados = validarCliente(dados);
     setErros(encontrados);
     const primeiroErro = Object.keys(encontrados)[0];
     if (primeiroErro) {
       document.getElementById(`pedido-${primeiroErro}`)?.focus();
       return;
     }
-    window.open(linkWhatsApp(WHATSAPP_NUMERO, montarMensagem(resumo, dados)), '_blank', 'noopener,noreferrer');
+    window.open(linkWhatsApp(WHATSAPP_NUMERO, montarMensagem(resumo, dados, ENTREGA_TEXTO)), '_blank', 'noopener,noreferrer');
     onEnviado();
   };
 
@@ -245,25 +247,33 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
       </div>
 
       <form onSubmit={enviar} noValidate className="space-y-4 px-6 py-6">
-        <p className="font-display text-2xl font-semibold text-tinta">Dados da ceia</p>
+        <div className="flex gap-3 rounded-2xl border border-ouro/40 bg-white p-4">
+          <Truck className="mt-0.5 size-5 shrink-0 text-ouro-escuro" aria-hidden="true" />
+          <div className="text-sm">
+            <p className="font-semibold text-tinta">Entrega no dia {ENTREGA_TEXTO}</p>
+            <p className="mt-0.5 text-pedra">{PRAZO_PEDIDOS_TEXTO}.</p>
+          </div>
+        </div>
+        <p className="font-display text-2xl font-semibold text-tinta">Seus dados</p>
         <Campo rotulo="Seu nome" erro={erros.nome} chave="nome">
           <input {...campo('nome')} autoComplete="name" maxLength={80} className={estiloCampo} />
         </Campo>
-        <div className="grid grid-cols-2 gap-3">
-          <Campo rotulo="Data da ceia" erro={erros.dataEvento} chave="dataEvento">
-            <input {...campo('dataEvento')} type="date" min={hoje} className={estiloCampo} />
-          </Campo>
-          <Campo rotulo="Convidados" erro={erros.convidados} chave="convidados">
-            <input {...campo('convidados')} type="number" inputMode="numeric" min={1} max={capacidade} className={estiloCampo} />
-          </Campo>
-        </div>
         <Campo rotulo="Endereço de entrega" erro={erros.endereco} chave="endereco">
           <textarea {...campo('endereco')} autoComplete="street-address" rows={2} maxLength={200} className={estiloCampo} />
         </Campo>
         <Campo rotulo="Observações (opcional)" erro={erros.observacoes} chave="observacoes">
-          <textarea {...campo('observacoes')} rows={2} maxLength={500} placeholder="Restrições alimentares, horário de entrega…" className={estiloCampo} />
+          <textarea {...campo('observacoes')} rows={2} maxLength={500} placeholder="Restrições alimentares, ponto de referência…" className={estiloCampo} />
         </Campo>
-        <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-full bg-whatsapp px-6 py-4 text-sm font-bold text-white transition hover:brightness-110">
+        {!abertos && (
+          <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+            As encomendas da ceia foram encerradas ({PRAZO_PEDIDOS_TEXTO.toLowerCase()}).
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={!abertos}
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-whatsapp px-6 py-4 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+        >
           <WhatsAppIcon className="size-5" /> Enviar pedido pelo WhatsApp
         </button>
         <button

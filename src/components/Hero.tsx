@@ -89,25 +89,25 @@ export function Hero({ iniciar, onEscolherCeia }: Props) {
           <motion.figure style={{ y: yRetrato }} {...entrada(0.35)} className="relative">
             <div className="overflow-hidden rounded-[2.2rem] border-[10px] border-white shadow-[0_40px_80px_-30px_rgb(29_27_24/0.55)]">
               <img
-                src={foto('IMG_6977')}
-                alt="Chef Carlos Jr de dólmã ao lado da equipe"
-                width={1600}
-                height={1200}
+                src={foto('CHEF_RETRATO')}
+                alt="Chef Carlos Jr de dólmã branca, de braços cruzados"
+                width={1280}
+                height={1032}
                 fetchPriority="high"
-                className="aspect-[4/5] w-full object-cover object-[52%_30%]"
+                className="aspect-[4/5] w-full object-cover object-[50%_35%]"
               />
             </div>
             <figcaption className="vidro absolute -bottom-5 left-1/2 w-max -translate-x-1/2 rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-grafite">
-              Chef Carlos Jr &amp; equipe
+              Chef Carlos Jr
             </figcaption>
           </motion.figure>
-          <motion.div style={{ y: yCartao }} {...entrada(0.7)} className="absolute -left-6 bottom-16 w-36 rotate-[-6deg] overflow-hidden rounded-2xl border-[6px] border-white shadow-2xl sm:-left-14 sm:w-44" aria-hidden="true">
-            <img src={foto(CEIAS[0].fotos[0].nome)} alt="" width={1200} height={1600} className="aspect-[4/5] w-full object-cover" />
+          <motion.div style={{ y: yCartao }} {...entrada(0.7)} className="absolute -left-6 bottom-14 w-40 rotate-[-6deg] overflow-hidden rounded-2xl border-[6px] border-white shadow-2xl sm:-left-16 sm:w-52">
+            <img src={foto('CHEF_PRATO')} alt="Chef Carlos Jr apresentando um prato autoral" width={1302} height={1066} className="aspect-[4/5] w-full object-cover object-[50%_45%]" />
           </motion.div>
           <motion.div style={{ y: ySelo }} {...entrada(0.85)} className="vidro absolute -right-3 top-8 max-w-[12rem] rounded-2xl p-4 shadow-xl sm:-right-8">
             <p className="font-script text-3xl leading-none text-ouro-escuro">Natal 2026</p>
-            <p className="mt-1 text-sm font-semibold text-tinta">Ceias de 4 a 12 pessoas</p>
-            <p className="mt-1 text-xs text-pedra">A partir de {formatarBRL(MENOR_PRECO)}</p>
+            <p className="mt-1 text-sm font-semibold text-tinta">Entrega 24/12, a partir das 12h</p>
+            <p className="mt-1 text-xs text-pedra">Pedidos até 20/12 · a partir de {formatarBRL(MENOR_PRECO)}</p>
           </motion.div>
         </div>
       </div>

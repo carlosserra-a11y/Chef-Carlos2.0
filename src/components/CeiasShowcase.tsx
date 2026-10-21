@@ -1,7 +1,7 @@
-import { Check, Images, LayoutGrid, ShoppingBag, Users } from 'lucide-react';
+import { Check, Images, LayoutGrid, ShoppingBag, Truck, Users } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { CEIAS, EXTRAS, WHATSAPP_NUMERO, foto, miniatura } from '../data/menuData.ts';
+import { CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, foto, miniatura } from '../data/menuData.ts';
 import { comExtra } from '../lib/carrinho.ts';
 import { formatarBRL } from '../lib/formato.ts';
 import { linkWhatsApp } from '../lib/pedido.ts';
@@ -43,9 +43,14 @@ export function CeiasShowcase({ selecionada, onSelecionar, onAdicionar }: Props)
           titulo={<>As três ceias <span className="italic text-ouro">do Chef</span></>}
           descricao="Escolha o tamanho da sua mesa, acrescente adicionais e envie o pedido completo direto para o WhatsApp do Chef."
         />
-        <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs text-carrara/75">
-          <Users className="size-4 text-ouro" aria-hidden="true" /> Cada ceia atende até 12 pessoas. Para mais convidados, adicione outra ceia ao pedido.
-        </p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          <p className="inline-flex items-center gap-2 rounded-full border border-ouro/50 bg-ouro/10 px-4 py-2 text-xs font-semibold text-carrara">
+            <Truck className="size-4 text-ouro" aria-hidden="true" /> {PRAZO_PEDIDOS_TEXTO} · entrega no dia {ENTREGA_TEXTO}
+          </p>
+          <p className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs text-carrara/75">
+            <Users className="size-4 text-ouro" aria-hidden="true" /> Cada ceia atende até 12 pessoas. Para mais convidados, adicione outra ceia ao pedido.
+          </p>
+        </div>
 
         <div role="tablist" aria-label="Tamanho da ceia" className="mt-10 grid gap-4 md:grid-cols-3">
           {CEIAS.map((c, i) => (

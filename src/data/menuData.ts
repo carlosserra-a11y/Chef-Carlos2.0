@@ -8,6 +8,11 @@ export const WHATSAPP_EXIBICAO = '+55 48 99683-5439';
 export const INSTAGRAM_URL = 'https://www.instagram.com/chefcarlosjr_gastronomia/';
 export const INSTAGRAM_USUARIO = '@chefcarlosjr_gastronomia';
 
+/** Prazo de encomenda e entrega fixa das ceias de Natal. */
+export const PRAZO_PEDIDOS_ISO = '2026-12-20';
+export const PRAZO_PEDIDOS_TEXTO = 'Pedidos até 20/12/2026';
+export const ENTREGA_TEXTO = '24/12, a partir das 12h, com rastreio de entrega';
+
 const base = import.meta.env.BASE_URL;
 export const foto = (nome: string): string => `${base}assets/fotos/${nome}.webp`;
 export const miniatura = (nome: string): string => `${base}assets/fotos/${nome}-thumb.webp`;
@@ -49,7 +54,7 @@ export const CEIAS: Ceia[] = [
     nome: 'Ceia de 6 a 8 pessoas',
     pessoas: '6 a 8 pessoas',
     maxPessoas: 8,
-    preco: 999.99,
+    preco: 999.9,
     destaque: 'Mais pedida',
     resumo: 'Chester inteiro laqueado como centro de mesa, com quiche francesa e saladas clássicas.',
     itens: [
@@ -73,7 +78,7 @@ export const CEIAS: Ceia[] = [
     nome: 'Ceia de 10 a 12 pessoas',
     pessoas: '10 a 12 pessoas',
     maxPessoas: 12,
-    preco: 1399,
+    preco: 1399.9,
     destaque: 'Mesa completa',
     resumo: 'O banquete completo: dois Chesters inteiros, quiches, todas as saladas e três sobremesas.',
     itens: [
