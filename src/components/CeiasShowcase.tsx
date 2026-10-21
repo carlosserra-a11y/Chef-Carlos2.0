@@ -123,7 +123,6 @@ function CartaoCeia({ ceia, ativa, onClick, onKeyDown, refBotao }: CartaoProps) 
         )}
       </div>
       <div className="p-6 pt-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-carrara/60">{ceia.pessoas}</p>
         <p className="mt-2 font-display text-3xl font-semibold leading-tight">{ceia.nome}</p>
         <p className="mt-2 font-display text-4xl font-semibold text-ouro">{formatarBRL(ceia.preco)}</p>
         <p className="mt-3 text-sm leading-relaxed text-carrara/65">{ceia.resumo}</p>
@@ -226,8 +225,7 @@ function PainelCeia({ ceia, onAdicionar }: { ceia: Ceia; onAdicionar: Props['onA
       </div>
 
       <div className="flex flex-col">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-carrara/55">{ceia.pessoas}</p>
-        <h3 className="mt-2 font-display text-4xl font-semibold md:text-5xl">{ceia.nome}</h3>
+        <h3 className="font-display text-4xl font-semibold md:text-5xl">{ceia.nome}</h3>
         <div className="mt-6 space-y-5">
           {ceia.cardapio.map((grupo) => (
             <div key={grupo.titulo}>

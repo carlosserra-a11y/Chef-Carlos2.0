@@ -63,7 +63,7 @@ export function Hero({ iniciar, onEscolherCeia }: Props) {
             <span className="mt-3 block font-script text-[0.72em] font-normal leading-[1.1] text-grafite">pelo Chef Carlos Jr</span>
           </motion.h1>
           <motion.p {...entrada(0.4)} className="mt-7 max-w-xl text-base leading-relaxed text-grafite md:text-lg">
-            Três tamanhos de ceia, até 12 pessoas cada, com o acabamento de alta gastronomia do Chef. Escolha a sua, acrescente
+            Três tamanhos de ceia, até 12 pessoas, com o acabamento de alta gastronomia do Chef. Escolha a sua, acrescente
             adicionais e envie o pedido completo pelo WhatsApp.
           </motion.p>
 

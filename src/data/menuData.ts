@@ -62,7 +62,7 @@ export const CEIAS: Ceia[] = [
     ],
     composicao: { 'chester-inteiro': 1, 'arroz-grega': 1, farofa: 1, salpicao: 1, maionese: 1, pave: 1, frutas: 1 },
     fotos: [
-      { nome: 'CEIA4_01', legenda: 'A mesa completa da ceia para 4 pessoas' },
+      { nome: 'CEIA4_01', legenda: 'A mesa completa da ceia para 4 pessoas', ilustrativa: true },
       { nome: 'CEIA4_02', legenda: 'Chester assado com decoração de frutas' },
       { nome: 'CEIA4_03', legenda: 'Chester dourado, assado lentamente' },
       { nome: 'CEIA4_04', legenda: 'Chester, arroz à grega e saladas' },
