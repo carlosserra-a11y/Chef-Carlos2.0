@@ -2,6 +2,8 @@
 // O site é estático, então a sequência vem de um contador público compartilhado por todos os visitantes;
 // o número fica salvo no navegador para a mesma pessoa manter o mesmo número nos pedidos seguintes.
 
+import { armazenamentoLocal, lerEscolhaPrivacidade } from './privacidade.ts';
+
 export const CHAVE_NUMERO_CLIENTE = 'chef-carlos-2:numero-cliente';
 const TEMPO_LIMITE_MS = 3000;
 /** Só dígitos (até 9): recusa "0x10", "1e3", " 7 " e outros formatos que Number() aceitaria. */
@@ -17,13 +19,13 @@ const MAIOR_NUMERO = 999_999_999;
 const numeroValido = (valor: unknown): valor is number =>
   typeof valor === 'number' && Number.isSafeInteger(valor) && valor > 0 && valor <= MAIOR_NUMERO;
 
-/** localStorage pode estar bloqueado (modo privado, cookies desativados): sem ele, só não lembra o número. */
+/**
+ * Onde guardar o número: o localStorage, a menos que esteja bloqueado (modo privado) ou que o visitante
+ * tenha recusado o aviso de cookies; nesses casos o número vale só para o pedido atual.
+ */
 export function armazenamentoDoNavegador(): Armazenamento {
-  try {
-    return window.localStorage;
-  } catch {
-    return SEM_ARMAZENAMENTO;
-  }
+  const local = armazenamentoLocal();
+  return lerEscolhaPrivacidade(local) === 'recusado' ? SEM_ARMAZENAMENTO : local;
 }
 
 export function lerNumeroSalvo(armazenamento: Pick<Storage, 'getItem'>): number | null {

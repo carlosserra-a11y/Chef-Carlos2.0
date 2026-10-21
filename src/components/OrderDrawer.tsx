@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronDown, Gift, ShoppingBag, Trash2, Truck, Users, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, CreditCard, Gift, ShoppingBag, Trash2, Truck, Users, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react';
 import {
@@ -7,6 +7,7 @@ import {
   CONTADOR_CLIENTES_URL,
   ENTREGA_TEXTO,
   EXTRAS,
+  PAGAMENTO_FORMAS,
   PRAZO_PEDIDOS_ISO,
   PRAZO_PEDIDOS_TEXTO,
   WHATSAPP_NUMERO,
@@ -19,6 +20,7 @@ import { enviarPedidoWhatsApp } from '../lib/envioPedido.ts';
 import { armazenamentoDoNavegador, lerNumeroSalvo, obterNumeroCliente } from '../lib/numeroCliente.ts';
 import {
   capacidadePedido,
+  dividirPagamento,
   linkWhatsApp,
   montarMensagem,
   pedidosAbertos,
@@ -34,7 +36,7 @@ import { WhatsAppIcon } from './ui/BrandIcons.tsx';
 import { SUAVE } from './ui/Reveal.tsx';
 
 const CATALOGO = { ceias: CEIAS, extras: EXTRAS };
-const CONDICOES = { entrega: ENTREGA_TEXTO, brinde: BRINDE_TEXTO };
+const CONDICOES = { entrega: ENTREGA_TEXTO, brinde: BRINDE_TEXTO, pagamento: PAGAMENTO_FORMAS };
 const VAZIO: DadosCliente = { nome: '', endereco: '', observacoes: '' };
 const FOCAVEIS = 'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])';
 
@@ -192,6 +194,7 @@ function Conteudo({ itens, despachar, dados, setDados, enviando, setEnviando, on
   const [expandido, setExpandido] = useState<string | null>(null);
   const [falhaEnvio, setFalhaEnvio] = useState(false);
   const resumo = resumirPedido(itens, CATALOGO);
+  const pagamento = dividirPagamento(resumo.total);
   const capacidade = capacidadePedido(itens, CEIAS);
   const abertos = pedidosAbertos(hojeLocal(), PRAZO_PEDIDOS_ISO);
 
@@ -296,6 +299,19 @@ function Conteudo({ itens, despachar, dados, setDados, enviando, setEnviando, on
           <p className="text-sm text-carrara/70">Total</p>
           <p className="font-display text-3xl font-semibold text-ouro">{formatarBRL(resumo.total)}</p>
         </div>
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+          <p className="rounded-xl bg-white/5 px-3 py-2">
+            <span className="block text-carrara/60">50% na hora do pedido</span>
+            <span className="font-semibold text-carrara">{formatarBRL(pagamento.noPedido)}</span>
+          </p>
+          <p className="rounded-xl bg-white/5 px-3 py-2">
+            <span className="block text-carrara/60">50% na entrega</span>
+            <span className="font-semibold text-carrara">{formatarBRL(pagamento.naEntrega)}</span>
+          </p>
+        </div>
+        <p className="mt-2 flex items-center gap-1.5 text-xs text-carrara/60">
+          <CreditCard className="size-3.5" aria-hidden="true" /> Pagamento por {PAGAMENTO_FORMAS}
+        </p>
         <p className="mt-2 flex items-center gap-1.5 text-xs text-carrara/60">
           <Users className="size-3.5" aria-hidden="true" /> Este pedido serve até {capacidade} pessoas.
         </p>

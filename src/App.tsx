@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useReducer, useState } from 'react';
+import { AvisoPrivacidade } from './components/AvisoPrivacidade.tsx';
 import { BrindeBolsa } from './components/BrindeBolsa.tsx';
 import { CeiasShowcase } from './components/CeiasShowcase.tsx';
 import { ComoEncomendar } from './components/ComoEncomendar.tsx';
@@ -12,6 +13,8 @@ import { OrderDrawer } from './components/OrderDrawer.tsx';
 import { ScrollProgress } from './components/ScrollProgress.tsx';
 import { CEIAS, EXTRAS } from './data/menuData.ts';
 import { carrinhoReducer, sanitizarCarrinho } from './lib/carrinho.ts';
+import { CHAVE_NUMERO_CLIENTE } from './lib/numeroCliente.ts';
+import { aplicarEscolhaPrivacidade, armazenamentoLocal, lerEscolhaPrivacidade, type EscolhaPrivacidade } from './lib/privacidade.ts';
 import type { CeiaId, ItemCarrinho } from './types.ts';
 
 // Chave própria: o site 1.0 fica no mesmo domínio (carlosserra-a11y.github.io)
@@ -54,8 +57,12 @@ export default function App() {
   const [carrinhoAberto, setCarrinhoAberto] = useState(false);
   const [ceiaSelecionada, setCeiaSelecionada] = useState<CeiaId>('ceia-6-8');
   const [aviso, setAviso] = useState<string | null>(null);
+  // null = ainda não escolheu (mostra o aviso de cookies); "recusado" = não guarda nada no navegador.
+  const [privacidade, setPrivacidade] = useState<EscolhaPrivacidade | null>(() => lerEscolhaPrivacidade(armazenamentoLocal()));
 
-  useEffect(() => gravarArmazenamento('local', CHAVE_CARRINHO, JSON.stringify(itens)), [itens]);
+  useEffect(() => {
+    if (privacidade !== 'recusado') gravarArmazenamento('local', CHAVE_CARRINHO, JSON.stringify(itens));
+  }, [itens, privacidade]);
 
   useEffect(() => {
     if (!aviso) return;
@@ -67,6 +74,10 @@ export default function App() {
     gravarArmazenamento('sessao', CHAVE_INTRO, '1');
     setMostrarIntro(false);
   }, []);
+  const escolherPrivacidade = (escolha: EscolhaPrivacidade) => {
+    aplicarEscolhaPrivacidade(armazenamentoLocal(), escolha, [CHAVE_CARRINHO, CHAVE_NUMERO_CLIENTE]);
+    setPrivacidade(escolha);
+  };
   const abrirCarrinho = useCallback(() => setCarrinhoAberto(true), []);
   const fecharCarrinho = useCallback(() => setCarrinhoAberto(false), []);
 
@@ -94,8 +105,12 @@ export default function App() {
         <BrindeBolsa />
         <ComoEncomendar />
       </main>
-      <Footer />
-      {!carrinhoAberto && !mostrarIntro && <FloatingWhatsApp />}
+      <Footer onPreferenciasPrivacidade={() => setPrivacidade(null)} />
+      {/* O botão flutuante espera a escolha de cookies para não ficar por cima do aviso. */}
+      {!carrinhoAberto && !mostrarIntro && privacidade !== null && <FloatingWhatsApp />}
+      <AnimatePresence>
+        {!mostrarIntro && privacidade === null && <AvisoPrivacidade onEscolher={escolherPrivacidade} />}
+      </AnimatePresence>
 
       <OrderDrawer aberto={carrinhoAberto} itens={itens} despachar={despachar} onFechar={fecharCarrinho} />
 

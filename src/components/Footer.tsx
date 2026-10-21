@@ -12,7 +12,12 @@ const NAVEGACAO = [
   ['#inicio', 'Voltar ao topo'],
 ];
 
-export function Footer() {
+type Props = {
+  /** Reabre o aviso de cookies para o visitante mudar a escolha. */
+  onPreferenciasPrivacidade: () => void;
+};
+
+export function Footer({ onPreferenciasPrivacidade }: Props) {
   const ano = new Date().getFullYear();
   return (
     <footer id="contato" className="relative overflow-hidden bg-tinta text-carrara">
@@ -89,7 +94,11 @@ export function Footer() {
           </div>
         </div>
         <p className="border-t border-white/10 py-6 text-center text-xs text-carrara/45">
-          © {ano} Chef Carlos Jr Gastronomia. Fotos reais de eventos realizados pelo Chef e equipe.
+          © {ano} Chef Carlos Jr Gastronomia. Fotos de eventos do Chef e equipe; as marcadas como ilustrativas são apenas
+          referência. ·{' '}
+          <button type="button" onClick={onPreferenciasPrivacidade} className="underline underline-offset-4 transition hover:text-carrara">
+            Cookies e privacidade
+          </button>
         </p>
       </div>
     </footer>

@@ -1,7 +1,18 @@
-import { Check, Gift, Images, LayoutGrid, ShoppingBag, Truck, Users } from 'lucide-react';
+import { Check, CreditCard, Gift, Images, LayoutGrid, ShoppingBag, Truck, Users } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { BRINDE_TEXTO, CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, foto, miniatura } from '../data/menuData.ts';
+import {
+  BRINDE_TEXTO,
+  CEIAS,
+  ENTREGA_TEXTO,
+  EXTRAS,
+  PAGAMENTO_CONDICOES,
+  PAGAMENTO_FORMAS,
+  PRAZO_PEDIDOS_TEXTO,
+  WHATSAPP_NUMERO,
+  foto,
+  miniatura,
+} from '../data/menuData.ts';
 import { comExtra } from '../lib/carrinho.ts';
 import { formatarBRL } from '../lib/formato.ts';
 import { linkWhatsApp, valorExtras } from '../lib/pedido.ts';
@@ -48,7 +59,10 @@ export function CeiasShowcase({ selecionada, onSelecionar, onAdicionar }: Props)
             <Truck className="size-4 text-ouro" aria-hidden="true" /> {PRAZO_PEDIDOS_TEXTO} · entrega no dia {ENTREGA_TEXTO}
           </p>
           <p className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs text-carrara/75">
-            <Users className="size-4 text-ouro" aria-hidden="true" /> Cada ceia atende até 12 pessoas. Para mais convidados, adicione outra ceia ao pedido.
+            <Users className="size-4 text-ouro" aria-hidden="true" /> Temos ceias de até 12 pessoas. Para mais convidados, peça outra ceia ou adicionais.
+          </p>
+          <p className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs text-carrara/75">
+            <CreditCard className="size-4 text-ouro" aria-hidden="true" /> {PAGAMENTO_FORMAS} · {PAGAMENTO_CONDICOES}
           </p>
         </div>
 

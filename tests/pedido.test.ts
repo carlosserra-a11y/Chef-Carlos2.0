@@ -7,6 +7,7 @@ import {
   montarMensagem,
   pedidosAbertos,
   resumirPedido,
+  dividirPagamento,
   textoSeguro,
   validarCliente,
   valorExtras,
@@ -24,6 +25,7 @@ const extras: Extra[] = [
 ];
 const catalogo = { ceias, extras };
 const ENTREGA = '24/12, a partir das 12h, com rastreio de entrega';
+const PAGAMENTO = 'PIX, débito ou crédito';
 
 const itens: ItemCarrinho[] = [
   { uid: 'a', ceiaId: 'ceia-6-8', extras: { farofa: 2, chester: 1 } },
@@ -72,6 +74,7 @@ test('monta mensagem completa para o WhatsApp com a entrega fixa', () => {
   const msg = montarMensagem(resumirPedido(itens, catalogo), cliente, {
     entrega: ENTREGA,
     brinde: 'Bolsa térmica Chef Carlos Jr',
+    pagamento: PAGAMENTO,
   });
   assert.match(msg, /\*Cliente:\* Maria Silva/);
   assert.match(msg, /\*Endereço:\* Rua das Flores/);
@@ -95,7 +98,7 @@ test('soma o valor dos adicionais com preço para o total ao vivo da ceia', () =
 });
 
 test('mostra o número do cliente na comanda quando ele existe', () => {
-  const condicoes = { entrega: ENTREGA, brinde: 'Bolsa térmica Chef Carlos Jr' };
+  const condicoes = { entrega: ENTREGA, brinde: 'Bolsa térmica Chef Carlos Jr', pagamento: PAGAMENTO };
   const comNumero = montarMensagem(resumirPedido(itens, catalogo), cliente, condicoes, 7);
   assert.match(comNumero, /\*Cliente nº 7:\* Maria Silva/);
   const semNumero = montarMensagem(resumirPedido(itens, catalogo), cliente, condicoes, null);
@@ -109,7 +112,7 @@ test('texto digitado pelo cliente não consegue forjar linhas da comanda', () =>
     endereco: 'Rua A, 1\r\n*Entrega:* 26/12',
     observacoes: 'linha 1\n\n_Brinde:_ ~dois~ `x`\u202Eevil\u200Bzero',
   };
-  const msg = montarMensagem(resumirPedido(itens, catalogo), malicioso, { entrega: ENTREGA, brinde: 'Bolsa' }, 2);
+  const msg = montarMensagem(resumirPedido(itens, catalogo), malicioso, { entrega: ENTREGA, brinde: 'Bolsa', pagamento: PAGAMENTO }, 2);
   const linhas = msg.split('\n');
   assert.equal(linhas.filter((l) => l.startsWith('*Total:*')).length, 1);
   assert.equal(linhas.filter((l) => l.startsWith('*Entrega:*')).length, 1);
@@ -145,6 +148,22 @@ test('nome precisa ter letra e endereço precisa ter letra ou número', () => {
   assert.ok(validarCliente({ ...cliente, nome: '\u3164\u3164\u3164' }).nome);
   assert.ok(validarCliente({ ...cliente, endereco: '-----.' }).endereco);
   assert.deepEqual(validarCliente({ ...cliente, nome: 'Zé', endereco: 'Rua 7, 10' }), {});
+});
+
+test('divide o pagamento: 50% na hora do pedido e 50% na entrega', () => {
+  assert.deepEqual(dividirPagamento(1489.6), { noPedido: 744.8, naEntrega: 744.8 });
+  assert.deepEqual(dividirPagamento(599.9), { noPedido: 299.95, naEntrega: 299.95 });
+  assert.deepEqual(dividirPagamento(100.01), { noPedido: 50.01, naEntrega: 50 });
+  assert.deepEqual(dividirPagamento(0), { noPedido: 0, naEntrega: 0 });
+});
+
+test('a comanda traz as formas de pagamento e as duas metades do valor', () => {
+  const msg = montarMensagem(resumirPedido(itens, catalogo), cliente, { entrega: ENTREGA, brinde: 'Bolsa', pagamento: PAGAMENTO });
+  const linhas = msg.split('\n');
+  const total = linhas.findIndex((l) => l.startsWith('*Total:*'));
+  assert.equal(linhas[total + 1], '*Pagamento:* PIX, débito ou crédito');
+  assert.match(linhas[total + 2], /^• 50% na hora do pedido: R\$\s899,90$/);
+  assert.match(linhas[total + 3], /^• 50% na entrega: R\$\s899,90$/);
 });
 
 test('gera link do WhatsApp com texto codificado', () => {

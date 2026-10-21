@@ -18,6 +18,10 @@ export const ENTREGA_TEXTO = '24/12, a partir das 12h, com rastreio de entrega';
 export const BRINDE_TEXTO = 'Bolsa térmica Chef Carlos Jr';
 export const BRINDE_FOTO = 'BOLSA_BRINDE';
 
+/** Pagamento: formas aceitas e divisão (50% no pedido, 50% na entrega). */
+export const PAGAMENTO_FORMAS = 'PIX, débito ou crédito';
+export const PAGAMENTO_CONDICOES = '50% na hora do pedido e 50% na entrega das ceias';
+
 /**
  * Contador público que dá a cada cliente novo o próximo número (1, 2, 3…) na comanda do WhatsApp.
  * Em desenvolvimento usa outra chave, para os testes não gastarem a numeração real.

@@ -53,7 +53,7 @@ export function valorExtras(extras: Readonly<Record<string, number>>, catalogo: 
   );
 }
 
-/** Quantas pessoas as ceias do pedido servem somadas (cada ceia atende até 12). */
+/** Quantas pessoas as ceias do pedido servem somadas (até 4, 8 ou 12, conforme a ceia). */
 export function capacidadePedido(itens: readonly ItemCarrinho[], ceias: readonly Ceia[]): number {
   return itens.reduce((soma, item) => soma + (ceias.find((c) => c.id === item.ceiaId)?.maxPessoas ?? 0), 0);
 }
@@ -130,6 +130,20 @@ export interface CondicoesPedido {
   entrega: string;
   /** Brinde que acompanha todo pedido (ex.: "Bolsa térmica Chef Carlos Jr"). */
   brinde: string;
+  /** Formas de pagamento aceitas (ex.: "PIX, débito ou crédito"). */
+  pagamento: string;
+}
+
+export interface DivisaoPagamento {
+  noPedido: number;
+  naEntrega: number;
+}
+
+/** 50% na hora do pedido e 50% na entrega; um centavo ímpar fica na parte do pedido. */
+export function dividirPagamento(total: number): DivisaoPagamento {
+  const totalCentavos = Math.round(total * 100);
+  const noPedidoCentavos = Math.ceil(totalCentavos / 2);
+  return { noPedido: noPedidoCentavos / 100, naEntrega: (totalCentavos - noPedidoCentavos) / 100 };
 }
 
 /** `numeroCliente` é o número sequencial da pessoa (1, 2, 3…), que o Chef usa para identificar o pedido. */
@@ -140,6 +154,7 @@ export function montarMensagem(
   numeroCliente: number | null = null,
 ): string {
   const rotuloCliente = numeroCliente ? `*Cliente nº ${numeroCliente}:*` : '*Cliente:*';
+  const pagamento = dividirPagamento(resumo.total);
   const linhas = [
     'Olá, Chef Carlos! Quero encomendar minha ceia pelo site.',
     '',
@@ -152,6 +167,9 @@ export function montarMensagem(
     ...resumo.ceias.flatMap((c) => [`• ${c.nome} — ${formatarBRL(c.preco)}`, ...c.extras.map(linhaExtra)]),
     '',
     `*Total:* ${formatarBRL(resumo.total)}`,
+    `*Pagamento:* ${condicoes.pagamento}`,
+    `• 50% na hora do pedido: ${formatarBRL(pagamento.noPedido)}`,
+    `• 50% na entrega: ${formatarBRL(pagamento.naEntrega)}`,
   ];
   if (resumo.temValorACombinar) linhas.push('_Extras sem preço na tabela: valores a combinar por aqui._');
   const obs = textoSeguro(cliente.observacoes);

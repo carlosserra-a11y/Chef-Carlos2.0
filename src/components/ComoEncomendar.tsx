@@ -3,10 +3,14 @@ import { Reveal } from './ui/Reveal.tsx';
 import { SectionHeading } from './ui/SectionHeading.tsx';
 
 const PASSOS: { titulo: string; texto: string; Icone: LucideIcon }[] = [
-  { titulo: 'Escolha o tamanho', texto: 'Até 4, de 6 a 8 ou de 10 a 12 pessoas. Para mais convidados, some duas ceias no mesmo pedido.', Icone: ClipboardList },
+  { titulo: 'Escolha o tamanho', texto: 'Até 4, de 6 a 8 ou de 10 a 12 pessoas. Para mais convidados, peça outra ceia ou adicionais.', Icone: ClipboardList },
   { titulo: 'Acrescente adicionais', texto: 'Mais Chester, farofa, quiche ou sobremesas: escolha as porções extras de cada ceia.', Icone: Plus },
-  { titulo: 'Envie pelo WhatsApp', texto: 'Informe seu nome e o endereço de entrega. O pedido chega pronto e detalhado para o Chef. Pedidos até 20/12/2026.', Icone: MessageCircle },
-  { titulo: 'Entrega no dia 24/12', texto: 'Sua ceia chega a partir das 12h, com rastreio de entrega. O Chef confirma os detalhes com você pelo WhatsApp.', Icone: Truck },
+  {
+    titulo: 'Envie pelo WhatsApp',
+    texto: 'Informe seu nome e o endereço de entrega. Na hora do pedido você paga 50% por PIX, débito ou crédito. Pedidos até 20/12/2026.',
+    Icone: MessageCircle,
+  },
+  { titulo: 'Entrega no dia 24/12', texto: 'Sua ceia chega a partir das 12h, com rastreio de entrega. Os outros 50% são pagos na entrega.', Icone: Truck },
 ];
 
 export function ComoEncomendar() {

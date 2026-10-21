@@ -10,7 +10,9 @@ React 19 · Vite 8 · Tailwind CSS 4 · Motion · TypeScript.
 - **Intro** em verde-pinheiro e dourado: a assinatura oficial do Chef é escrita com brilho dourado, neve dourada que reage ao toque/mouse (com faíscas), logo com inclinação 3D, contagem regressiva para o Natal e botão "Entrar no cardápio" (cerca de 6 s, uma vez por visita; "Pular"; respeita "reduzir movimento").
 - **Hero** focado na ceia, com os três valores clicáveis e parallax.
 - **As três ceias** (R$ 599,90 · R$ 999,90 · R$ 1.399,90), cada uma com o **cardápio oficial com quantidades** (proteínas, acompanhamentos, sobremesas e finalização), fotos, ilustração da composição da mesa e **adicionais**.
-- Cada ceia atende **até 12 pessoas**; para mais convidados o cliente adiciona outra ceia ao pedido (o carrinho mostra quantas pessoas o pedido serve).
+- Ceias de **até 4, de 6 a 8 e de 10 a 12 pessoas**; para mais convidados o cliente pede outra ceia ou adicionais (o carrinho mostra quantas pessoas o pedido serve).
+- **Pagamento**: PIX, débito ou crédito; 50% na hora do pedido e 50% na entrega. O carrinho e a mensagem do WhatsApp já mostram os dois valores (`PAGAMENTO_FORMAS` e `PAGAMENTO_CONDICOES` em `menuData.ts`).
+- **Aviso de cookies e privacidade** (Aceitar/Recusar; reabre pelo rodapé): o site não usa cookies de rastreamento; recusar apaga o carrinho e o número salvos e deixa de guardá-los.
 - **Brinde**: bolsa térmica Chef Carlos Jr em todo pedido (seção própria, aviso em cada ceia, no carrinho e na mensagem do WhatsApp).
 - **Como encomendar** em 4 passos.
 - **Pedidos até 20/12/2026; entrega no dia 24/12, a partir das 12h, com rastreio** (o carrinho não pede data nem convidados e bloqueia o envio depois do prazo).
