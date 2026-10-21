@@ -11,7 +11,7 @@ type Props = {
  * "Chef Carlos Jr" em preto (ou branco em fundo escuro) e "GASTRONOMIA" em prata.
  */
 export function Logo({ claro = false, tamanho = 'pequeno' }: Props) {
-  const altura = tamanho === 'grande' ? 'h-24 md:h-28' : 'h-11 md:h-12';
+  const altura = tamanho === 'grande' ? 'h-28 md:h-36' : 'h-14 md:h-16';
   return (
     <img
       src={claro ? LOGO_CLARA_URL : LOGO_URL}

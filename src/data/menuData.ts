@@ -61,8 +61,10 @@ export const CEIAS: Ceia[] = [
     ],
     composicao: { 'chester-inteiro': 1, quiche: 1, waldorf: 1, salpicao: 1, pudim: 1 },
     fotos: [
+      { nome: 'CEIA68_MONTAGEM', legenda: 'O que vem na ceia: Chester, quiche, saladas e pudim', ilustrativa: true },
+      { nome: 'CEIA4_02', legenda: 'Chester inteiro assado com laranja e uvas' },
       { nome: 'IMG_2288', legenda: 'Quiche francesa artesanal' },
-      { nome: 'IMG_7063', legenda: 'Saladas de folhas nobres' },
+      { nome: 'CEIA4_07', legenda: 'Salpicão e saladas' },
       { nome: 'IMG_6346', legenda: 'Pudim artesanal' },
     ],
   },
@@ -84,9 +86,11 @@ export const CEIAS: Ceia[] = [
     ],
     composicao: { 'chester-inteiro': 2, quiche: 2, salpicao: 1, waldorf: 1, pave: 1, cheesecake: 1, pudim: 1 },
     fotos: [
+      { nome: 'CEIA1012_MONTAGEM', legenda: 'O que vem na ceia: 2 Chesters, quiches, saladas e 3 sobremesas', ilustrativa: true },
       { nome: 'IMG_7326', legenda: 'Mesa completa montada pela equipe' },
-      { nome: 'IMG_2292', legenda: 'Sobremesas da mesa' },
-      { nome: 'IMG_2288', legenda: 'Quiche francesa' },
+      { nome: 'CEIA4_03', legenda: 'Chester inteiro dourado' },
+      { nome: 'CEIA4_06', legenda: 'Pavê de chocolate' },
+      { nome: 'IMG_2292', legenda: 'Cheesecake e sobremesas' },
     ],
   },
 ];

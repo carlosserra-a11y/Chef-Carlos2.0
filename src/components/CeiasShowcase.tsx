@@ -164,20 +164,22 @@ function PainelCeia({ ceia, onAdicionar }: { ceia: Ceia; onAdicionar: Props['onA
 
         {visao === 'fotos' ? (
           <div>
-            <figure className="relative overflow-hidden rounded-3xl bg-black/30">
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={atual.nome}
-                  src={foto(atual.nome)}
-                  alt={`${ceia.nome}: ${atual.legenda}`}
-                  initial={{ opacity: 0, scale: 1.03 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="aspect-[4/3] w-full object-cover"
-                />
-              </AnimatePresence>
-              <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/80 to-transparent p-4 pt-12 text-sm text-carrara/90">
+            <figure className="overflow-hidden rounded-3xl bg-black/30">
+              <div className="overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={atual.nome}
+                    src={foto(atual.nome)}
+                    alt={`${ceia.nome}: ${atual.legenda}`}
+                    initial={{ opacity: 0, scale: 1.03 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="aspect-[4/3] w-full object-cover"
+                  />
+                </AnimatePresence>
+              </div>
+              <figcaption className="flex items-center justify-between gap-3 px-4 py-3 text-sm text-carrara/90">
                 <span>{atual.legenda}</span>
                 {atual.ilustrativa && (
                   <span className="shrink-0 rounded-full bg-white/15 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wider backdrop-blur">
