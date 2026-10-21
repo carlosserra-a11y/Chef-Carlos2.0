@@ -29,6 +29,17 @@ Tudo fica em `src/data/menuData.ts`:
 - **Adicionais**: `EXTRAS` (nome, porção, `preco` e `descricao` opcional). Os preços somam no total do pedido.
 - **Logo**: desenho oficial em `public/assets/logo-chef-carlos.png` (preta + "GASTRONOMIA" prata) e `logo-chef-carlos-clara.png` (branca, para fundos escuros).
 
+## Segurança
+
+- **Política de segurança (CSP) com Trusted Types** na página publicada (`vite.config.ts`): o site só carrega arquivos dele mesmo, só se conecta ao contador de clientes e bloqueia injeção de scripts/HTML. Se um dia precisar de outro serviço externo, ele tem que ser liberado ali.
+- **Sem terceiros carregando conteúdo**: as fontes são servidas pelo próprio site (`@fontsource`), sem Google Fonts; `referrer` desligado para WhatsApp, Instagram e contador.
+- **Anti-clickjacking**: dentro de um iframe de outro site, a página mostra só um link para abrir o site direto (o GitHub Pages não permite o cabeçalho `X-Frame-Options`).
+- **Comanda protegida**: nome, endereço e observações viram uma linha simples, sem quebras, caracteres invisíveis/de direção de texto ou marcas de formatação do WhatsApp, então ninguém forja linhas como "*Total:* R$ 1,00"; o nome precisa ter letras e o endereço letras ou números. Mesmo assim o cliente pode editar a mensagem antes de enviar: **o Chef sempre confere o total pela tabela de preços e não toca em links que vierem dentro de um pedido**.
+- **Dados pessoais**: nome e endereço não ficam salvos no navegador nem passam por servidor; vão só na mensagem do WhatsApp. O navegador guarda apenas o carrinho e o número do cliente.
+- **Publicação**: actions fixadas por commit, permissões mínimas por job, `npm ci --ignore-scripts`, assinaturas do npm verificadas e `npm audit` bloqueando o deploy se houver vulnerabilidade alta. O Dependabot (`.github/dependabot.yml`) propõe atualizações semanais, só de versões com 7+ dias, e cada proposta passa pela mesma verificação (auditoria, lint, testes e build) antes de poder ser aceita; nada é publicado sem passar por ela.
+- **Endereço compartilhado**: em `carlosserra-a11y.github.io` todos os sites do GitHub Pages da conta dividem a mesma origem para o navegador. Um script de terceiros comprometido em outro desses sites poderia mexer neste. A proteção completa é publicar a ceia num domínio próprio ou numa conta/organização só dela.
+- **HTTPS** obrigatório com HSTS (GitHub Pages) e sem source maps publicados.
+
 ## Rodar localmente
 
 ```bash

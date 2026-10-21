@@ -11,7 +11,11 @@ type Armazenamento = Pick<Storage, 'getItem' | 'setItem'>;
 
 const SEM_ARMAZENAMENTO: Armazenamento = { getItem: () => null, setItem: () => undefined };
 
-const numeroValido = (valor: unknown): valor is number => typeof valor === 'number' && Number.isSafeInteger(valor) && valor > 0;
+/** Mesmo teto do formato salvo (9 dígitos): um número maior nunca seria relido do navegador. */
+const MAIOR_NUMERO = 999_999_999;
+
+const numeroValido = (valor: unknown): valor is number =>
+  typeof valor === 'number' && Number.isSafeInteger(valor) && valor > 0 && valor <= MAIOR_NUMERO;
 
 /** localStorage pode estar bloqueado (modo privado, cookies desativados): sem ele, só não lembra o número. */
 export function armazenamentoDoNavegador(): Armazenamento {

@@ -2,6 +2,9 @@
 import type { CeiaId, ItemCarrinho } from '../types.ts';
 
 export const MAX_EXTRA = 10;
+/** Teto para o carrinho lido do localStorage (dado externo): evita travar a página com lixo gigante. */
+export const MAX_ITENS_SALVOS = 50;
+const MAX_TAMANHO_UID = 64;
 
 export type AcaoCarrinho =
   | { tipo: 'adicionar'; itens: readonly ItemCarrinho[] }
@@ -43,8 +46,9 @@ const ehObjeto = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 export function sanitizarCarrinho(bruto: unknown, ids: IdsValidos): ItemCarrinho[] {
   if (!Array.isArray(bruto)) return [];
   const vistos = new Set<string>();
-  return bruto.flatMap((item): ItemCarrinho[] => {
-    if (!ehObjeto(item) || typeof item.uid !== 'string' || vistos.has(item.uid)) return [];
+  return bruto.slice(0, MAX_ITENS_SALVOS * 2).flatMap((item): ItemCarrinho[] => {
+    if (vistos.size >= MAX_ITENS_SALVOS || !ehObjeto(item) || typeof item.uid !== 'string') return [];
+    if (item.uid.length > MAX_TAMANHO_UID || vistos.has(item.uid)) return [];
     if (typeof item.ceiaId !== 'string' || !ids.ceias.includes(item.ceiaId)) return [];
     vistos.add(item.uid);
     const extrasBrutos = ehObjeto(item.extras) ? item.extras : {};

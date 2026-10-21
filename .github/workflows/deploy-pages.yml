@@ -1,35 +1,43 @@
-# Publica o site no GitHub Pages a cada push na main.
+# Publica o site no GitHub Pages a cada push na main. Em pull requests (inclusive os do Dependabot)
+# só roda a verificação completa (auditoria, lint, testes e build), sem publicar nada.
+# Segurança da cadeia de publicação:
+# - actions fixadas pelo commit (SHA), não pela tag, que pode ser movida; o Dependabot propõe as atualizações;
+# - cada job recebe só as permissões de que precisa; o checkout não guarda a credencial no disco;
+# - dependências instaladas sem rodar scripts de instalação e com assinaturas do registro verificadas.
 name: Deploy GitHub Pages
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
+permissions: {}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
 
-      - run: npm ci
+      - run: npm ci --ignore-scripts
 
-      # Falha o deploy se houver dependência de produção com vulnerabilidade alta/crítica conhecida.
-      - run: npm audit --omit=dev --audit-level=high
+      # Confere as assinaturas dos pacotes baixados do registro do npm.
+      - run: npm audit signatures
+
+      # Falha o deploy se qualquer dependência (inclusive as de build) tiver vulnerabilidade alta/crítica conhecida.
+      - run: npm audit --audit-level=high
 
       - run: npm run lint
 
@@ -40,16 +48,26 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        if: github.event_name != 'pull_request'
         with:
           path: dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    # Não interrompe um deploy em andamento (evita publicar pela metade).
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

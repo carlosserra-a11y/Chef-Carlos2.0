@@ -1,6 +1,7 @@
 // Conteúdo oficial: contatos, as três ceias (valores e cardápio) e os adicionais.
 // As fotos ficam em public/assets/fotos/<nome>.webp (+ <nome>-thumb.webp).
 import type { Ceia, Extra } from '../types.ts';
+import { CONTADOR_ORIGEM } from './contador.ts';
 
 /** WhatsApp oficial do Chef: +55 48 99683-5439 (formato internacional, só dígitos). */
 export const WHATSAPP_NUMERO = '5548996835439';
@@ -22,7 +23,7 @@ export const BRINDE_FOTO = 'BOLSA_BRINDE';
  * Em desenvolvimento usa outra chave, para os testes não gastarem a numeração real.
  * Quantos clientes já foram numerados: https://abacus.jasoncameron.dev/get/chef-carlos-jr/clientes-natal-2026
  */
-const CONTADOR_BASE = 'https://abacus.jasoncameron.dev/hit/chef-carlos-jr';
+const CONTADOR_BASE = `${CONTADOR_ORIGEM}/hit/chef-carlos-jr`;
 export const CONTADOR_CLIENTES_URL = `${CONTADOR_BASE}/${import.meta.env.DEV ? 'clientes-teste' : 'clientes-natal-2026'}`;
 
 const base = import.meta.env.BASE_URL;

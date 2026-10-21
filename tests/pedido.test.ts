@@ -7,6 +7,7 @@ import {
   montarMensagem,
   pedidosAbertos,
   resumirPedido,
+  textoSeguro,
   validarCliente,
   valorExtras,
   type DadosCliente,
@@ -100,6 +101,50 @@ test('mostra o número do cliente na comanda quando ele existe', () => {
   const semNumero = montarMensagem(resumirPedido(itens, catalogo), cliente, condicoes, null);
   assert.match(semNumero, /\*Cliente:\* Maria Silva/);
   assert.doesNotMatch(semNumero, /nº/);
+});
+
+test('texto digitado pelo cliente não consegue forjar linhas da comanda', () => {
+  const malicioso: DadosCliente = {
+    nome: 'Maria\n*Total:* R$ 1,00',
+    endereco: 'Rua A, 1\r\n*Entrega:* 26/12',
+    observacoes: 'linha 1\n\n_Brinde:_ ~dois~ `x`\u202Eevil\u200Bzero',
+  };
+  const msg = montarMensagem(resumirPedido(itens, catalogo), malicioso, { entrega: ENTREGA, brinde: 'Bolsa' }, 2);
+  const linhas = msg.split('\n');
+  assert.equal(linhas.filter((l) => l.startsWith('*Total:*')).length, 1);
+  assert.equal(linhas.filter((l) => l.startsWith('*Entrega:*')).length, 1);
+  assert.ok(linhas.includes('*Cliente nº 2:* Maria Total: R$ 1,00'));
+  assert.ok(linhas.includes('*Endereço:* Rua A, 1 Entrega: 26/12'));
+  assert.ok(linhas.includes('*Observações:* linha 1 Brinde: dois xevilzero'));
+  assert.doesNotMatch(msg, /[\u202A-\u202E\u2066-\u2069\u200B\u200E\u200F]/);
+});
+
+test('textoSeguro limpa invisíveis e formatação, mas mantém acentos e emojis', () => {
+  assert.equal(textoSeguro('  João\t da   Silva  '), 'João da Silva');
+  assert.equal(textoSeguro('Ana\u202E\u2066\u200F\uFEFF'), 'Ana');
+  assert.equal(textoSeguro('*negrito* _itálico_ ~riscado~ `mono`'), 'negrito itálico riscado mono');
+  assert.equal(textoSeguro('Chef 👨\u200D🍳 ção'), 'Chef 👨\u200D🍳 ção');
+});
+
+test('nome feito só de caracteres invisíveis não passa na validação', () => {
+  const erros = validarCliente({ ...cliente, nome: '\u202E\u202E\u200B ', endereco: '\u200B\u200B\u200B\u200B\u200B\u200B' });
+  assert.ok(erros.nome);
+  assert.ok(erros.endereco);
+});
+
+test('textoSeguro remove metade de emoji, preenchedores invisíveis e caracteres de tag', () => {
+  const metadeDeEmoji = 'Ana \uD83D';
+  assert.equal(textoSeguro(metadeDeEmoji), 'Ana');
+  assert.doesNotThrow(() => linkWhatsApp('55', textoSeguro(metadeDeEmoji)));
+  assert.equal(textoSeguro('Bia\u3164\u2800\u034F\u115F\u1160\uFFA0\u{E0041}\u206A'), 'Bia');
+  assert.equal(textoSeguro('Chef 👨\u200D🍳'), 'Chef 👨\u200D🍳');
+});
+
+test('nome precisa ter letra e endereço precisa ter letra ou número', () => {
+  assert.ok(validarCliente({ ...cliente, nome: '!!!' }).nome);
+  assert.ok(validarCliente({ ...cliente, nome: '\u3164\u3164\u3164' }).nome);
+  assert.ok(validarCliente({ ...cliente, endereco: '-----.' }).endereco);
+  assert.deepEqual(validarCliente({ ...cliente, nome: 'Zé', endereco: 'Rua 7, 10' }), {});
 });
 
 test('gera link do WhatsApp com texto codificado', () => {

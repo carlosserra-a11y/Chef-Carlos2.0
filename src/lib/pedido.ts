@@ -66,13 +66,51 @@ export interface DadosCliente {
 
 export type ErrosCliente = Partial<Record<keyof DadosCliente, string>>;
 
+// Controles e caracteres de formatação invisíveis (\p{Cc}, \p{Cf}: marcas de direção de texto, que podem
+// inverter o que o Chef lê, espaços de largura zero, caracteres de tag...) e "preenchedores" que parecem
+// espaço em branco. O U+200D (junção que forma emojis como o de chef) continua permitido.
+const INVISIVEIS = /(?!\u200D)[\p{Cc}\p{Cf}\u034F\u115F\u1160\u2800\u3164\uFFA0]/gu;
+// Marcas de formatação do WhatsApp: sem elas o cliente não imita os rótulos em negrito da comanda.
+const FORMATACAO_WHATSAPP = /[*_~`]/g;
+const TEM_LETRA = /\p{L}/u;
+const TEM_LETRA_OU_NUMERO = /[\p{L}\p{N}]/u;
+
+/**
+ * Metade de um emoji (surrogate solto, ex.: emoji cortado pelo limite do campo) quebraria o
+ * encodeURIComponent do link do WhatsApp: mantém os pares válidos e descarta os soltos.
+ */
+function semSurrogateSolto(texto: string): string {
+  let saida = '';
+  for (const c of texto) {
+    const unidade = c.charCodeAt(0);
+    if (c.length === 1 && unidade >= 0xd800 && unidade <= 0xdfff) continue;
+    saida += c;
+  }
+  return saida;
+}
+
+/**
+ * Texto digitado pelo cliente vira uma linha simples, para não forjar linhas da comanda
+ * (ex.: um nome com quebra de linha e "*Total:* R$ 1,00").
+ */
+export function textoSeguro(texto: string): string {
+  return semSurrogateSolto(texto)
+    .replace(/\s+/g, ' ')
+    .replace(INVISIVEIS, '')
+    .replace(FORMATACAO_WHATSAPP, '')
+    .replace(/ {2,}/g, ' ')
+    .trim();
+}
+
 /** A entrega é em data fixa (24/12), então o cliente só informa nome, endereço e observações. */
 export function validarCliente(dados: DadosCliente): ErrosCliente {
   const erros: ErrosCliente = {};
-  const nome = dados.nome.trim();
-  if (nome.length < 2 || nome.length > 80) erros.nome = 'Informe seu nome (2 a 80 caracteres).';
-  const endereco = dados.endereco.trim();
-  if (endereco.length < 5 || endereco.length > 200) erros.endereco = 'Informe o endereço de entrega.';
+  const nome = textoSeguro(dados.nome);
+  if (nome.length < 2 || nome.length > 80 || !TEM_LETRA.test(nome)) erros.nome = 'Informe seu nome (2 a 80 caracteres).';
+  const endereco = textoSeguro(dados.endereco);
+  if (endereco.length < 5 || endereco.length > 200 || !TEM_LETRA_OU_NUMERO.test(endereco)) {
+    erros.endereco = 'Informe o endereço de entrega.';
+  }
   if (dados.observacoes.length > 500) erros.observacoes = 'Use até 500 caracteres.';
   return erros;
 }
@@ -105,8 +143,8 @@ export function montarMensagem(
   const linhas = [
     'Olá, Chef Carlos! Quero encomendar minha ceia pelo site.',
     '',
-    `${rotuloCliente} ${cliente.nome.trim()}`,
-    `*Endereço:* ${cliente.endereco.trim()}`,
+    `${rotuloCliente} ${textoSeguro(cliente.nome)}`,
+    `*Endereço:* ${textoSeguro(cliente.endereco)}`,
     `*Entrega:* ${condicoes.entrega}`,
     `*Brinde:* ${condicoes.brinde}`,
     '',
@@ -116,7 +154,7 @@ export function montarMensagem(
     `*Total:* ${formatarBRL(resumo.total)}`,
   ];
   if (resumo.temValorACombinar) linhas.push('_Extras sem preço na tabela: valores a combinar por aqui._');
-  const obs = cliente.observacoes.trim();
+  const obs = textoSeguro(cliente.observacoes);
   if (obs) linhas.push('', `*Observações:* ${obs}`);
   return linhas.join('\n');
 }

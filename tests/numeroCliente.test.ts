@@ -56,6 +56,7 @@ test('sem contador (erro, resposta inválida ou demora) o pedido segue sem núme
     resposta({ value: -1 }),
     resposta({ value: '12' }),
     resposta({ value: 1e21 }),
+    resposta({ value: 1_000_000_000 }),
     async () => ({ ok: true, json: async () => Promise.reject(new SyntaxError('json inválido')) }) as unknown as Response,
     async () => {
       throw new Error('sem rede');

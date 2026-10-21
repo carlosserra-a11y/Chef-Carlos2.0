@@ -86,6 +86,24 @@ test('cliente fechou a aba durante a espera: trata como cancelado', async () => 
   assert.equal(aba.location.href, '');
 });
 
+test('erro ao montar o link: fecha a aba de espera e repassa o erro', async () => {
+  let fechada = false;
+  const aba = { ...abaFalsa(), close: () => (fechada = true) };
+  await assert.rejects(
+    enviarPedidoWhatsApp({
+      numeroSalvo: null,
+      abrir: () => aba,
+      irPara: () => assert.fail('não deve sair da página'),
+      obterNumero: async () => 8,
+      montarLink: () => {
+        throw new URIError('URI malformed');
+      },
+    }),
+    URIError,
+  );
+  assert.equal(fechada, true);
+});
+
 test('sem número (contador fora do ar ou erro): o pedido segue sem número', async () => {
   for (const obterNumero of [async () => null, async () => Promise.reject(new Error('falhou'))]) {
     const aba = abaFalsa();

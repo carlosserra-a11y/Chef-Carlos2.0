@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { MAX_EXTRA, carrinhoReducer, sanitizarCarrinho } from '../src/lib/carrinho.ts';
+import { MAX_EXTRA, MAX_ITENS_SALVOS, carrinhoReducer, sanitizarCarrinho } from '../src/lib/carrinho.ts';
 import type { ItemCarrinho } from '../src/types.ts';
 
 const vazio: ItemCarrinho[] = [];
@@ -42,4 +42,11 @@ test('sanitiza carrinho salvo no navegador descartando dados inválidos e uids r
   ];
   assert.deepEqual(sanitizarCarrinho(bruto, ids), [ceia('a', { farofa: 3 })]);
   assert.deepEqual(sanitizarCarrinho('{}', ids), []);
+});
+
+test('carrinho salvo gigante ou com uid enorme é limitado', () => {
+  const ids = { ceias: ['ceia-4'], extras: [] };
+  const muitos = Array.from({ length: 500 }, (_, i) => ceia(`u${i}`));
+  assert.equal(sanitizarCarrinho(muitos, ids).length, MAX_ITENS_SALVOS);
+  assert.deepEqual(sanitizarCarrinho([ceia('x'.repeat(65)), ceia('ok')], ids), [ceia('ok')]);
 });

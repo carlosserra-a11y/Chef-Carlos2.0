@@ -190,6 +190,7 @@ type ConteudoProps = {
 function Conteudo({ itens, despachar, dados, setDados, enviando, setEnviando, onEnviado }: ConteudoProps) {
   const [erros, setErros] = useState<ErrosCliente>({});
   const [expandido, setExpandido] = useState<string | null>(null);
+  const [falhaEnvio, setFalhaEnvio] = useState(false);
   const resumo = resumirPedido(itens, CATALOGO);
   const capacidade = capacidadePedido(itens, CEIAS);
   const abertos = pedidosAbertos(hojeLocal(), PRAZO_PEDIDOS_ISO);
@@ -213,6 +214,7 @@ function Conteudo({ itens, despachar, dados, setDados, enviando, setEnviando, on
       return;
     }
     const armazenamento = armazenamentoDoNavegador();
+    setFalhaEnvio(false);
     setEnviando(true);
     try {
       const resultado = await enviarPedidoWhatsApp({
@@ -223,6 +225,8 @@ function Conteudo({ itens, despachar, dados, setDados, enviando, setEnviando, on
         montarLink: (numero) => linkWhatsApp(WHATSAPP_NUMERO, montarMensagem(resumo, dados, CONDICOES, numero)),
       });
       if (resultado.enviado) onEnviado(resultado.numero);
+    } catch {
+      setFalhaEnvio(true); // aviso na tela; o carrinho continua montado para tentar de novo
     } finally {
       setEnviando(false);
     }
@@ -322,6 +326,11 @@ function Conteudo({ itens, despachar, dados, setDados, enviando, setEnviando, on
         {!abertos && (
           <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
             As encomendas da ceia foram encerradas ({PRAZO_PEDIDOS_TEXTO.toLowerCase()}).
+          </p>
+        )}
+        {falhaEnvio && (
+          <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+            Não conseguimos abrir o WhatsApp. Tente de novo ou fale com o Chef pelo botão verde do WhatsApp.
           </p>
         )}
         <button

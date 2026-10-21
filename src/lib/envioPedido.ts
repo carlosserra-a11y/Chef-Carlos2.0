@@ -6,6 +6,7 @@ export interface AbaNavegador {
   opener: unknown;
   location: { href: string };
   document?: { title: string; body: { textContent: string | null } | null };
+  close?: () => void;
 }
 
 export interface OpcoesEnvio {
@@ -56,7 +57,13 @@ export async function enviarPedidoWhatsApp(opcoes: OpcoesEnvio): Promise<Resulta
     numero = null; // sem número o pedido segue do mesmo jeito
   }
   if (aba?.closed) return { enviado: false };
-  const link = montarLink(numero);
+  let link: string;
+  try {
+    link = montarLink(numero);
+  } catch (erro) {
+    aba?.close?.(); // não deixa a aba presa em "Abrindo o WhatsApp…"
+    throw erro;
+  }
   if (aba) aba.location.href = link;
   else irPara(link);
   return { enviado: true, numero };

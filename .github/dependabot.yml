@@ -1,0 +1,22 @@
+# Dependabot: abre pedidos de atualização (PRs) toda semana para as dependências do site e para as
+# actions do deploy. Só sugere versões publicadas há pelo menos 7 dias, para não pegar um pacote
+# recém-comprometido. Nada é aplicado sozinho: cada PR roda os testes e precisa ser aprovado.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      dependencias:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
