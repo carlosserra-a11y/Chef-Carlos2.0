@@ -4,16 +4,19 @@ export type CeiaId = 'ceia-4' | 'ceia-6-8' | 'ceia-10-12';
 
 /** Peças desenhadas na ilustração de composição de cada ceia. */
 export type PecaIlustracao =
-  | 'chester-fatiado'
   | 'chester-inteiro'
-  | 'arroz'
+  | 'lombo'
+  | 'arroz-branco'
+  | 'arroz-grega'
   | 'farofa'
-  | 'salpicao'
   | 'quiche'
+  | 'maionese'
+  | 'salpicao'
   | 'waldorf'
-  | 'pudim'
   | 'pave'
-  | 'cheesecake';
+  | 'cheesecake'
+  | 'pudim'
+  | 'frutas';
 
 export interface FotoCeia {
   /** Nome do arquivo em public/assets/fotos, sem extensão. */
@@ -21,6 +24,17 @@ export interface FotoCeia {
   legenda: string;
   /** Imagem criada para ilustrar a montagem (não é foto do evento). */
   ilustrativa?: boolean;
+}
+
+/** Item do cardápio oficial, com a quantidade servida (ex.: "150 g por pessoa"). */
+export interface ItemCardapio {
+  nome: string;
+  quantidade?: string;
+}
+
+export interface GrupoCardapio {
+  titulo: 'Proteína' | 'Proteínas' | 'Acompanhamentos' | 'Sobremesa' | 'Sobremesas' | 'Finalização';
+  itens: ItemCardapio[];
 }
 
 export interface Ceia {
@@ -31,7 +45,7 @@ export interface Ceia {
   preco: number;
   destaque?: string;
   resumo: string;
-  itens: string[];
+  cardapio: GrupoCardapio[];
   /** Quantidade de cada peça na mesa, usada pela ilustração (composição e porção). */
   composicao: Partial<Record<PecaIlustracao, number>>;
   fotos: FotoCeia[];

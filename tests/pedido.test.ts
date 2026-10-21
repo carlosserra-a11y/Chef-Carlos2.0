@@ -67,10 +67,14 @@ test('aceita pedidos até o último dia do prazo e recusa depois', () => {
 });
 
 test('monta mensagem completa para o WhatsApp com a entrega fixa', () => {
-  const msg = montarMensagem(resumirPedido(itens, catalogo), cliente, ENTREGA);
+  const msg = montarMensagem(resumirPedido(itens, catalogo), cliente, {
+    entrega: ENTREGA,
+    brinde: 'Bolsa térmica Chef Carlos Jr',
+  });
   assert.match(msg, /\*Cliente:\* Maria Silva/);
   assert.match(msg, /\*Endereço:\* Rua das Flores/);
   assert.match(msg, /\*Entrega:\* 24\/12, a partir das 12h, com rastreio de entrega/);
+  assert.match(msg, /\*Brinde:\* Bolsa térmica Chef Carlos Jr/);
   assert.doesNotMatch(msg, /Convidados|Data da ceia/);
   assert.match(msg, /Ceia de 6 a 8 pessoas — R\$\s999,90/);
   assert.match(msg, /\+ 2x Farofa de castanhas \(500 g\) — valor a combinar/);

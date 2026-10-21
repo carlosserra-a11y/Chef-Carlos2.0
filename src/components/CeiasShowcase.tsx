@@ -1,7 +1,7 @@
-import { Check, Images, LayoutGrid, ShoppingBag, Truck, Users } from 'lucide-react';
+import { Check, Gift, Images, LayoutGrid, ShoppingBag, Truck, Users } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, foto, miniatura } from '../data/menuData.ts';
+import { BRINDE_TEXTO, CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, foto, miniatura } from '../data/menuData.ts';
 import { comExtra } from '../lib/carrinho.ts';
 import { formatarBRL } from '../lib/formato.ts';
 import { linkWhatsApp } from '../lib/pedido.ts';
@@ -226,16 +226,26 @@ function PainelCeia({ ceia, onAdicionar }: { ceia: Ceia; onAdicionar: Props['onA
       <div className="flex flex-col">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-carrara/55">{ceia.pessoas}</p>
         <h3 className="mt-2 font-display text-4xl font-semibold md:text-5xl">{ceia.nome}</h3>
-        <ul className="mt-6 space-y-3">
-          {ceia.itens.map((item) => (
-            <li key={item} className="flex items-start gap-3 text-carrara/85">
-              <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-ouro/20 text-ouro">
-                <Check className="size-3" aria-hidden="true" />
-              </span>
-              {item}
-            </li>
+        <div className="mt-6 space-y-5">
+          {ceia.cardapio.map((grupo) => (
+            <div key={grupo.titulo}>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-ouro">{grupo.titulo}</p>
+              <ul className="mt-2 space-y-2">
+                {grupo.itens.map((item) => (
+                  <li key={item.nome} className="flex items-start gap-3 text-carrara/85">
+                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-ouro/20 text-ouro">
+                      <Check className="size-3" aria-hidden="true" />
+                    </span>
+                    <span className="flex flex-1 flex-wrap items-baseline justify-between gap-x-3">
+                      <span>{item.nome}</span>
+                      {item.quantidade && <span className="text-xs text-carrara/55">{item.quantidade}</span>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
 
         <div className="mt-8 rounded-2xl border border-white/10 bg-black/20 p-4">
           <div className="flex items-baseline justify-between">
@@ -252,6 +262,9 @@ function PainelCeia({ ceia, onAdicionar }: { ceia: Ceia; onAdicionar: Props['onA
             <p className="text-xs uppercase tracking-[0.2em] text-carrara/55">Valor da ceia</p>
             <p className="font-display text-5xl font-semibold text-ouro">{formatarBRL(ceia.preco)}</p>
             {totalExtras > 0 && <p className="mt-1 text-xs text-carrara/60">+ adicionais selecionados</p>}
+            <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-ouro">
+              <Gift className="size-3.5" aria-hidden="true" /> Brinde: {BRINDE_TEXTO}
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <a

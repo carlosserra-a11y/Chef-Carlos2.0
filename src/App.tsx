@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useReducer, useState } from 'react';
+import { BrindeBolsa } from './components/BrindeBolsa.tsx';
 import { CeiasShowcase } from './components/CeiasShowcase.tsx';
 import { ComoEncomendar } from './components/ComoEncomendar.tsx';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp.tsx';
@@ -90,6 +91,7 @@ export default function App() {
       <main id="conteudo">
         <Hero iniciar={!mostrarIntro} onEscolherCeia={escolherCeia} />
         <CeiasShowcase selecionada={ceiaSelecionada} onSelecionar={setCeiaSelecionada} onAdicionar={adicionarCeia} />
+        <BrindeBolsa />
         <ComoEncomendar />
       </main>
       <Footer />

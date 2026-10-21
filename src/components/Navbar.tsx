@@ -5,6 +5,7 @@ import { Logo } from './ui/Logo.tsx';
 
 const LINKS = [
   { href: '#ceias', rotulo: 'As ceias' },
+  { href: '#brinde', rotulo: 'Brinde' },
   { href: '#como-encomendar', rotulo: 'Como encomendar' },
   { href: '#contato', rotulo: 'Contato' },
 ];

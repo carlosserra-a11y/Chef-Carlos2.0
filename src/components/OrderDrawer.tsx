@@ -1,7 +1,7 @@
-import { CheckCircle2, ChevronDown, ShoppingBag, Trash2, Truck, Users, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, Gift, ShoppingBag, Trash2, Truck, Users, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_ISO, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, miniatura } from '../data/menuData.ts';
+import { BRINDE_TEXTO, CEIAS, ENTREGA_TEXTO, EXTRAS, PRAZO_PEDIDOS_ISO, PRAZO_PEDIDOS_TEXTO, WHATSAPP_NUMERO, miniatura } from '../data/menuData.ts';
 import { useBloqueioRolagem } from '../hooks/useBloqueioRolagem.ts';
 import type { AcaoCarrinho } from '../lib/carrinho.ts';
 import { formatarBRL } from '../lib/formato.ts';
@@ -179,7 +179,7 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
       document.getElementById(`pedido-${primeiroErro}`)?.focus();
       return;
     }
-    window.open(linkWhatsApp(WHATSAPP_NUMERO, montarMensagem(resumo, dados, ENTREGA_TEXTO)), '_blank', 'noopener,noreferrer');
+    window.open(linkWhatsApp(WHATSAPP_NUMERO, montarMensagem(resumo, dados, { entrega: ENTREGA_TEXTO, brinde: BRINDE_TEXTO })), '_blank', 'noopener,noreferrer');
     onEnviado();
   };
 
@@ -242,6 +242,9 @@ function Conteudo({ itens, despachar, dados, setDados, onEnviado }: ConteudoProp
         </div>
         <p className="mt-2 flex items-center gap-1.5 text-xs text-carrara/60">
           <Users className="size-3.5" aria-hidden="true" /> Este pedido serve até {capacidade} pessoas.
+        </p>
+        <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-ouro">
+          <Gift className="size-3.5" aria-hidden="true" /> Brinde: {BRINDE_TEXTO}
         </p>
         {resumo.temValorACombinar && <p className="mt-1 text-xs text-carrara/60">Adicionais sem preço na tabela: valor combinado no WhatsApp.</p>}
       </div>

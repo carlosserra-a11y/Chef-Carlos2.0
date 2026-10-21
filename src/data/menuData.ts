@@ -1,4 +1,4 @@
-// Conteúdo oficial: contatos, as três ceias (valores) e os extras do personalizador.
+// Conteúdo oficial: contatos, as três ceias (valores e cardápio) e os adicionais.
 // As fotos ficam em public/assets/fotos/<nome>.webp (+ <nome>-thumb.webp).
 import type { Ceia, Extra } from '../types.ts';
 
@@ -13,6 +13,10 @@ export const PRAZO_PEDIDOS_ISO = '2026-12-20';
 export const PRAZO_PEDIDOS_TEXTO = 'Pedidos até 20/12/2026';
 export const ENTREGA_TEXTO = '24/12, a partir das 12h, com rastreio de entrega';
 
+/** Brinde que acompanha todo pedido de ceia. */
+export const BRINDE_TEXTO = 'Bolsa térmica Chef Carlos Jr';
+export const BRINDE_FOTO = 'BOLSA_BRINDE';
+
 const base = import.meta.env.BASE_URL;
 export const foto = (nome: string): string => `${base}assets/fotos/${nome}.webp`;
 export const miniatura = (nome: string): string => `${base}assets/fotos/${nome}-thumb.webp`;
@@ -22,6 +26,9 @@ export const LOGO_URL = `${base}assets/logo-chef-carlos.png`;
 /** Mesma arte em branco + "GASTRONOMIA" prata, para fundos escuros. */
 export const LOGO_CLARA_URL = `${base}assets/logo-chef-carlos-clara.png`;
 
+const POR_PESSOA = (g: number): string => `${g} g por pessoa`;
+const DECORACAO = { titulo: 'Finalização' as const, itens: [{ nome: 'Decoração com frutas' }] };
+
 export const CEIAS: Ceia[] = [
   {
     id: 'ceia-4',
@@ -29,23 +36,30 @@ export const CEIAS: Ceia[] = [
     pessoas: 'até 4 pessoas',
     maxPessoas: 4,
     preco: 599.9,
-    resumo: 'A ceia íntima: o essencial do Natal, com o acabamento de alta gastronomia do Chef.',
-    itens: [
-      'Chester fatiado ao mel e ervas',
-      'Arroz festivo',
-      'Farofa de castanhas',
-      'Salpicão defumado',
-      'Pudim artesanal',
+    resumo: 'Chester assado inteiro com acompanhamentos clássicos, pavê e decoração com frutas.',
+    cardapio: [
+      { titulo: 'Proteína', itens: [{ nome: 'Chester assado', quantidade: '1 unidade de 3 a 4 kg' }] },
+      {
+        titulo: 'Acompanhamentos',
+        itens: [
+          { nome: 'Arroz à grega', quantidade: POR_PESSOA(150) },
+          { nome: 'Farofa especial', quantidade: POR_PESSOA(80) },
+          { nome: 'Salpicão', quantidade: POR_PESSOA(150) },
+          { nome: 'Maionese de batata', quantidade: POR_PESSOA(100) },
+        ],
+      },
+      { titulo: 'Sobremesa', itens: [{ nome: 'Pavê', quantidade: POR_PESSOA(150) }] },
+      DECORACAO,
     ],
-    composicao: { 'chester-inteiro': 1, arroz: 1, farofa: 1, salpicao: 1, pudim: 1 },
+    composicao: { 'chester-inteiro': 1, 'arroz-grega': 1, farofa: 1, salpicao: 1, maionese: 1, pave: 1, frutas: 1 },
     fotos: [
       { nome: 'CEIA4_01', legenda: 'A mesa completa da ceia para 4 pessoas' },
-      { nome: 'CEIA4_02', legenda: 'Chester assado com laranja, uvas e alecrim' },
+      { nome: 'CEIA4_02', legenda: 'Chester assado com decoração de frutas' },
       { nome: 'CEIA4_03', legenda: 'Chester dourado, assado lentamente' },
-      { nome: 'CEIA4_04', legenda: 'Chester, arroz festivo e saladas' },
-      { nome: 'CEIA4_05', legenda: 'Arroz festivo e sobremesa' },
-      { nome: 'CEIA4_06', legenda: 'Sobremesa da ceia' },
-      { nome: 'CEIA4_07', legenda: 'Saladas e farofa crocante' },
+      { nome: 'CEIA4_04', legenda: 'Chester, arroz à grega e saladas' },
+      { nome: 'CEIA4_05', legenda: 'Arroz à grega e pavê' },
+      { nome: 'CEIA4_06', legenda: 'Pavê' },
+      { nome: 'CEIA4_07', legenda: 'Maionese de batata, salada e farofa especial' },
       { nome: 'CEIA4_08', legenda: 'Chester servido na travessa' },
     ],
   },
@@ -56,21 +70,45 @@ export const CEIAS: Ceia[] = [
     maxPessoas: 8,
     preco: 999.9,
     destaque: 'Mais pedida',
-    resumo: 'Chester inteiro laqueado como centro de mesa, com quiche francesa e saladas clássicas.',
-    itens: [
-      'Chester inteiro laqueado',
-      'Quiche francesa de brie e alho-poró',
-      'Salada Waldorf',
-      'Salpicão',
-      'Pudim artesanal',
+    resumo: 'Chester e lombo suíno à Califórnia, dois tipos de arroz, quiche e duas sobremesas.',
+    cardapio: [
+      {
+        titulo: 'Proteínas',
+        itens: [
+          { nome: 'Chester assado', quantidade: '1 unidade de 3 a 4 kg' },
+          { nome: 'Lombo suíno à Califórnia', quantidade: '1,5 kg' },
+        ],
+      },
+      {
+        titulo: 'Acompanhamentos',
+        itens: [
+          { nome: 'Arroz branco', quantidade: POR_PESSOA(150) },
+          { nome: 'Arroz à grega', quantidade: POR_PESSOA(150) },
+          { nome: 'Farofa especial', quantidade: POR_PESSOA(80) },
+          { nome: 'Quiche', quantidade: '1 unidade de aprox. 1 kg' },
+          { nome: 'Maionese de batata', quantidade: POR_PESSOA(150) },
+          { nome: 'Salpicão', quantidade: POR_PESSOA(150) },
+        ],
+      },
+      {
+        titulo: 'Sobremesas',
+        itens: [
+          { nome: 'Pavê', quantidade: POR_PESSOA(150) },
+          { nome: 'Cheesecake', quantidade: '1 unidade' },
+        ],
+      },
+      DECORACAO,
     ],
-    composicao: { 'chester-inteiro': 1, quiche: 1, waldorf: 1, salpicao: 1, pudim: 1 },
+    composicao: {
+      'chester-inteiro': 1, lombo: 1, 'arroz-branco': 1, 'arroz-grega': 1, farofa: 1, quiche: 1,
+      maionese: 1, salpicao: 1, pave: 1, cheesecake: 1, frutas: 1,
+    },
     fotos: [
-      { nome: 'CEIA68_MONTAGEM', legenda: 'O que vem na ceia: Chester, quiche, saladas e pudim', ilustrativa: true },
-      { nome: 'CEIA4_02', legenda: 'Chester inteiro assado com laranja e uvas' },
-      { nome: 'IMG_2288', legenda: 'Quiche francesa artesanal' },
-      { nome: 'CEIA4_07', legenda: 'Salpicão e saladas' },
-      { nome: 'IMG_6346', legenda: 'Pudim artesanal' },
+      { nome: 'CEIA68_MONTAGEM', legenda: 'Algumas preparações: Chester, quiche, arroz à grega, pavê e cheesecake', ilustrativa: true },
+      { nome: 'CEIA4_02', legenda: 'Chester assado com decoração de frutas' },
+      { nome: 'IMG_2288', legenda: 'Quiche' },
+      { nome: 'CEIA4_05', legenda: 'Arroz à grega e pavê' },
+      { nome: 'IMG_2292', legenda: 'Cheesecake' },
     ],
   },
   {
@@ -80,36 +118,64 @@ export const CEIAS: Ceia[] = [
     maxPessoas: 12,
     preco: 1399.9,
     destaque: 'Mesa completa',
-    resumo: 'O banquete completo: dois Chesters inteiros, quiches, todas as saladas e três sobremesas.',
-    itens: [
-      '2 Chesters inteiros',
-      'Mesa completa com quiches',
-      'Todas as saladas (salpicão e Waldorf)',
-      'Pavê de chocolate belga',
-      'Cheesecake de frutas vermelhas',
-      'Pudim artesanal',
+    resumo: 'Dois Chesters e lombo à Califórnia, mesa completa de acompanhamentos e três sobremesas.',
+    cardapio: [
+      {
+        titulo: 'Proteínas',
+        itens: [
+          { nome: 'Chester assado', quantidade: '2 unidades de 3 a 4 kg cada' },
+          { nome: 'Lombo suíno à Califórnia', quantidade: '2 kg' },
+        ],
+      },
+      {
+        titulo: 'Acompanhamentos',
+        itens: [
+          { nome: 'Arroz branco', quantidade: POR_PESSOA(150) },
+          { nome: 'Arroz à grega', quantidade: POR_PESSOA(150) },
+          { nome: 'Farofa especial', quantidade: POR_PESSOA(80) },
+          { nome: 'Quiche', quantidade: '1 unidade de aprox. 2 kg' },
+          { nome: 'Maionese de batata', quantidade: POR_PESSOA(100) },
+          { nome: 'Salada Waldorf', quantidade: POR_PESSOA(80) },
+          { nome: 'Salpicão', quantidade: POR_PESSOA(100) },
+        ],
+      },
+      {
+        titulo: 'Sobremesas',
+        itens: [
+          { nome: 'Pavê', quantidade: POR_PESSOA(150) },
+          { nome: 'Cheesecake', quantidade: '1 unidade' },
+          { nome: 'Pudim', quantidade: '1 unidade' },
+        ],
+      },
+      DECORACAO,
     ],
-    composicao: { 'chester-inteiro': 2, quiche: 2, salpicao: 1, waldorf: 1, pave: 1, cheesecake: 1, pudim: 1 },
+    composicao: {
+      'chester-inteiro': 2, lombo: 1, 'arroz-branco': 1, 'arroz-grega': 1, farofa: 1, quiche: 1,
+      maionese: 1, waldorf: 1, salpicao: 1, pave: 1, cheesecake: 1, pudim: 1, frutas: 1,
+    },
     fotos: [
-      { nome: 'CEIA1012_MONTAGEM', legenda: 'O que vem na ceia: 2 Chesters, quiches, saladas e 3 sobremesas', ilustrativa: true },
+      { nome: 'CEIA1012_MONTAGEM', legenda: 'Algumas preparações: 2 Chesters, quiche, saladas e 3 sobremesas', ilustrativa: true },
       { nome: 'IMG_7326', legenda: 'Mesa completa montada pela equipe' },
-      { nome: 'CEIA4_03', legenda: 'Chester inteiro dourado' },
-      { nome: 'CEIA4_06', legenda: 'Pavê de chocolate' },
-      { nome: 'IMG_2292', legenda: 'Cheesecake e sobremesas' },
+      { nome: 'CEIA4_03', legenda: 'Chester assado dourado' },
+      { nome: 'CEIA4_06', legenda: 'Pavê' },
+      { nome: 'IMG_2292', legenda: 'Cheesecake' },
+      { nome: 'IMG_6346', legenda: 'Pudim' },
     ],
   },
 ];
 
-/** Porções adicionais do personalizador. Sem `preco`, o valor é combinado no WhatsApp. */
+/** Adicionais de cada ceia (itens do cardápio). Sem `preco`, o valor é combinado no WhatsApp. */
 export const EXTRAS: Extra[] = [
-  { id: 'chester', nome: 'Chester inteiro extra', porcao: '1 unidade laqueada' },
-  { id: 'chester-fatiado', nome: 'Chester fatiado ao mel e ervas', porcao: 'porção extra' },
-  { id: 'farofa', nome: 'Farofa de castanhas', porcao: 'porção extra' },
-  { id: 'arroz', nome: 'Arroz festivo', porcao: 'porção extra' },
-  { id: 'salpicao', nome: 'Salpicão defumado', porcao: 'porção extra' },
+  { id: 'chester', nome: 'Chester assado', porcao: '1 unidade de 3 a 4 kg' },
+  { id: 'lombo', nome: 'Lombo suíno à Califórnia', porcao: 'porção extra' },
+  { id: 'arroz-branco', nome: 'Arroz branco', porcao: 'porção extra' },
+  { id: 'arroz-grega', nome: 'Arroz à grega', porcao: 'porção extra' },
+  { id: 'farofa', nome: 'Farofa especial', porcao: 'porção extra' },
+  { id: 'quiche', nome: 'Quiche', porcao: '1 unidade' },
+  { id: 'maionese', nome: 'Maionese de batata', porcao: 'porção extra' },
+  { id: 'salpicao', nome: 'Salpicão', porcao: 'porção extra' },
   { id: 'waldorf', nome: 'Salada Waldorf', porcao: 'porção extra' },
-  { id: 'quiche', nome: 'Quiche de brie e alho-poró', porcao: '1 quiche inteira' },
-  { id: 'pudim', nome: 'Pudim artesanal', porcao: '1 unidade' },
-  { id: 'pave', nome: 'Pavê de chocolate belga', porcao: '1 travessa' },
-  { id: 'cheesecake', nome: 'Cheesecake de frutas vermelhas', porcao: '1 unidade' },
+  { id: 'pave', nome: 'Pavê', porcao: 'porção extra' },
+  { id: 'cheesecake', nome: 'Cheesecake', porcao: '1 unidade' },
+  { id: 'pudim', nome: 'Pudim', porcao: '1 unidade' },
 ];

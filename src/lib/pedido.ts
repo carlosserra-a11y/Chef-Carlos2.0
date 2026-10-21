@@ -80,14 +80,21 @@ const linhaExtra = (e: LinhaExtra): string =>
     e.preco === undefined ? 'valor a combinar' : formatarBRL(e.preco * e.quantidade)
   }`;
 
-/** `entrega` = texto fixo da entrega (ex.: "24/12, a partir das 12h, com rastreio de entrega"). */
-export function montarMensagem(resumo: ResumoPedido, cliente: DadosCliente, entrega: string): string {
+export interface CondicoesPedido {
+  /** Texto fixo da entrega (ex.: "24/12, a partir das 12h, com rastreio de entrega"). */
+  entrega: string;
+  /** Brinde que acompanha todo pedido (ex.: "Bolsa térmica Chef Carlos Jr"). */
+  brinde: string;
+}
+
+export function montarMensagem(resumo: ResumoPedido, cliente: DadosCliente, condicoes: CondicoesPedido): string {
   const linhas = [
     'Olá, Chef Carlos! Quero encomendar minha ceia pelo site.',
     '',
     `*Cliente:* ${cliente.nome.trim()}`,
     `*Endereço:* ${cliente.endereco.trim()}`,
-    `*Entrega:* ${entrega}`,
+    `*Entrega:* ${condicoes.entrega}`,
+    `*Brinde:* ${condicoes.brinde}`,
     '',
     '*Ceias*',
     ...resumo.ceias.flatMap((c) => [`• ${c.nome} — ${formatarBRL(c.preco)}`, ...c.extras.map(linhaExtra)]),
