@@ -1,33 +1,30 @@
 import { ArrowDown, Sparkles } from 'lucide-react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useRef } from 'react';
-import { CEIAS, INSTAGRAM_URL, INSTAGRAM_USUARIO, WHATSAPP_NUMERO, foto } from '../data/menuData.ts';
-import { formatarBRL } from '../lib/formato.ts';
+import { INSTAGRAM_URL, INSTAGRAM_USUARIO, WHATSAPP_NUMERO, foto } from '../data/menuData.ts';
 import { linkWhatsApp } from '../lib/pedido.ts';
-import type { CeiaId } from '../types.ts';
 import { InstagramIcon, WhatsAppIcon } from './ui/BrandIcons.tsx';
 import { SUAVE } from './ui/Reveal.tsx';
 
 const MENSAGEM_HERO = 'Olá, Chef Carlos! Vim pelo site e quero saber mais sobre a ceia de Natal.';
-const MENOR_PRECO = Math.min(...CEIAS.map((c) => c.preco));
 
 type Props = {
   /** Só anima a entrada depois que a intro termina. */
   iniciar: boolean;
-  onEscolherCeia: (id: CeiaId) => void;
 };
 
+// A abertura não mostra preços: os valores aparecem só na seção das ceias, logo abaixo.
 function SeloNatal() {
   return (
     <>
       <p className="font-script text-3xl leading-none text-ouro-escuro">Natal 2026</p>
       <p className="mt-1 text-sm font-semibold text-tinta">Entrega 24/12, a partir das 12h</p>
-      <p className="mt-1 text-xs text-pedra">Pedidos até 20/12 · a partir de {formatarBRL(MENOR_PRECO)}</p>
+      <p className="mt-1 text-xs text-pedra">Pedidos até 20/12/2026</p>
     </>
   );
 }
 
-export function Hero({ iniciar, onEscolherCeia }: Props) {
+export function Hero({ iniciar }: Props) {
   const secao = useRef<HTMLElement>(null);
   const reduzir = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: secao, offset: ['start start', 'end start'] });
@@ -67,24 +64,13 @@ export function Hero({ iniciar, onEscolherCeia }: Props) {
             adicionais e envie o pedido completo pelo WhatsApp.
           </motion.p>
 
-          <motion.ul {...entrada(0.55)} className="mt-8 flex flex-wrap gap-2" aria-label="Ceias disponíveis">
-            {CEIAS.map((c) => (
-              <li key={c.id}>
-                <button
-                  type="button"
-                  onClick={() => onEscolherCeia(c.id)}
-                  className="group rounded-2xl border border-linho bg-white/70 px-4 py-3 text-left backdrop-blur transition hover:-translate-y-0.5 hover:border-ouro hover:shadow-md"
-                >
-                  <span className="block text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-pedra">{c.pessoas}</span>
-                  <span className="font-display text-2xl font-semibold text-tinta group-hover:text-ouro-escuro">{formatarBRL(c.preco)}</span>
-                </button>
-              </li>
-            ))}
-          </motion.ul>
-
-          <motion.div {...entrada(0.7)} className="mt-8 flex flex-wrap items-center gap-3">
-            <a href="#ceias" className="inline-flex items-center gap-2 rounded-full bg-tinta px-7 py-4 text-sm font-semibold text-carrara shadow-[0_18px_40px_-18px_rgb(29_27_24/0.8)] transition hover:-translate-y-0.5 hover:bg-grafite">
-              Montar minha ceia
+          <motion.div {...entrada(0.55)} className="mt-9 flex flex-wrap items-center gap-3">
+            <a
+              href="#ceias"
+              className="group inline-flex items-center gap-2 rounded-full bg-tinta px-7 py-4 text-sm font-semibold text-carrara shadow-[0_18px_40px_-18px_rgb(29_27_24/0.8)] transition hover:-translate-y-0.5 hover:bg-grafite"
+            >
+              Conheça nossos produtos
+              <ArrowDown className="size-4 transition group-hover:translate-y-0.5" aria-hidden="true" />
             </a>
             <a href={linkWhatsApp(WHATSAPP_NUMERO, MENSAGEM_HERO)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-4 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:brightness-110">
               <WhatsAppIcon /> Falar no WhatsApp

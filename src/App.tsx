@@ -86,11 +86,6 @@ export default function App() {
     setAviso(`${CEIAS.find((c) => c.id === ceiaId)?.nome ?? 'Ceia'} adicionada ao pedido`);
   };
 
-  const escolherCeia = (id: CeiaId) => {
-    setCeiaSelecionada(id);
-    document.getElementById('ceias')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <>
       <AnimatePresence>{mostrarIntro && <Intro onConcluir={concluirIntro} />}</AnimatePresence>
@@ -100,7 +95,7 @@ export default function App() {
       <ScrollProgress />
       <Navbar quantidade={itens.length} onAbrirCarrinho={abrirCarrinho} />
       <main id="conteudo">
-        <Hero iniciar={!mostrarIntro} onEscolherCeia={escolherCeia} />
+        <Hero iniciar={!mostrarIntro} />
         <CeiasShowcase selecionada={ceiaSelecionada} onSelecionar={setCeiaSelecionada} onAdicionar={adicionarCeia} />
         <BrindeBolsa />
         <ComoEncomendar />
