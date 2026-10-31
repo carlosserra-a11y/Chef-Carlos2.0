@@ -35,6 +35,9 @@ export function Hero({ iniciar }: Props) {
   const yCartao = useTransform(scrollYProgress, [0, 1], mover(-240));
   const ySelo = useTransform(scrollYProgress, [0, 1], mover(-170));
   const opacidade = useTransform(scrollYProgress, [0, 0.8], [1, 0.2]);
+  // O "Descubra" some logo no começo da rolagem: o visitante já entendeu que há mais conteúdo.
+  // O ponto final (1 → 0) é explícito: a animação nativa de rolagem completaria o trecho voltando a mostrar a seta.
+  const opacidadeDescubra = useTransform(scrollYProgress, [0, 0.25, 1], [1, 0, 0]);
 
   const entrada = (atraso: number) => ({
     initial: reduzir ? false : { opacity: 0, y: 40 },
@@ -117,15 +120,22 @@ export function Hero({ iniciar }: Props) {
         </div>
       </div>
 
-      <motion.a
-        href="#ceias"
-        aria-label="Rolar para as ceias"
-        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-pedra md:flex"
-        animate={reduzir ? undefined : { y: [0, 8, 0] }}
-        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        Conheça as ceias <ArrowDown className="size-4" aria-hidden="true" />
-      </motion.a>
+      {/* Indicador "Descubra": linha com brilho dourado e seta que desce suavemente (animação em index.css).
+          Fica no pé da primeira tela, mesmo quando a abertura é um pouco mais alta que ela (notebooks de 720px).
+          Só em telas grandes: no celular e no tablet a abertura ocupa várias telas e a foto do Chef já aparece embaixo. */}
+      <motion.div style={{ opacity: opacidadeDescubra }} className="absolute left-1/2 top-[calc(100svh-6.75rem)] hidden -translate-x-1/2 lg:block">
+        <motion.a
+          href="#ceias"
+          aria-label="Descubra as ceias"
+          className="seta-descubra flex flex-col items-center gap-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-pedra transition-colors hover:text-ouro-escuro"
+          initial={reduzir ? false : { opacity: 0 }}
+          animate={iniciar ? { opacity: 1 } : undefined}
+          transition={{ duration: 1, delay: 1.2, ease: SUAVE }}
+        >
+          Descubra
+          <span className="seta-descubra__linha h-11" aria-hidden="true" />
+        </motion.a>
+      </motion.div>
     </section>
   );
 }

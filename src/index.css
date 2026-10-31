@@ -78,6 +78,39 @@
   .sem-barra::-webkit-scrollbar {
     display: none;
   }
+  /* Indicador "Descubra" da abertura: brilho dourado descendo pela linha e seta que "respira" para baixo. */
+  .seta-descubra::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    margin-top: -0.25rem;
+    border-right: 1.5px solid var(--color-ouro-escuro);
+    border-bottom: 1.5px solid var(--color-ouro-escuro);
+    transform: rotate(45deg);
+    animation: seta-respira 2.4s ease-in-out infinite;
+  }
+  .seta-descubra__linha {
+    position: relative;
+    width: 1px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-pedra) 30%, transparent);
+  }
+  .seta-descubra__linha::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-ouro);
+    animation: seta-linha 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+}
+
+@keyframes seta-respira {
+  0%, 100% { transform: translateY(0) rotate(45deg); opacity: 0.45; }
+  50% { transform: translateY(6px) rotate(45deg); opacity: 1; }
+}
+@keyframes seta-linha {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100%); }
 }
 
 /* Slider da calculadora */
